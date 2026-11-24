@@ -38,7 +38,9 @@
         "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
         "android.permission.READ_EXTERNAL_STORAGE"
       ],
-      "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"]
+      "permissions": [
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -90,15 +92,17 @@
           "photosPermission": "O Faixa Certa usa suas fotos só para montar o card da sua conquista.",
           "savePhotosPermission": "O Faixa Certa salva na sua galeria o card da conquista que você criou.",
           "isAccessMediaLocationEnabled": false,
-          "granularPermissions": ["photo"]
+          "granularPermissions": [
+            "photo"
+          ]
         }
       ],
       "expo-iap",
       [
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
-          "iosAppId": "ca-app-pub-3940256099942544~1458002511"
+          "androidAppId": "ca-app-pub-6350645959394447~5874493727",
+          "iosAppId": "ca-app-pub-6350645959394447~8511818243"
         }
       ]
     ],
