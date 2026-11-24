@@ -7,5 +7,7 @@
 !**/.env.example
 .git
 apps/api/src/generated
-apps/mobile
+# O app mobile não roda no servidor: só o manifesto entra (o lockfile o referencia).
+apps/mobile/*
+!apps/mobile/package.json
 docs

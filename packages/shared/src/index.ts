@@ -4,6 +4,7 @@ export * from './design/tokens.js';
 export * from './enums.js';
 export * from './i18n/index.js';
 export * from './schemas/auth.js';
+export * from './schemas/catalog.js';
 export * from './schemas/common.js';
 export * from './schemas/content.js';
 export * from './schemas/media.js';

@@ -1,0 +1,63 @@
+name: Mobile (EAS)
+
+# Build do app nas nuvens da Expo e envio às lojas.
+#   - Manual: Actions → "Mobile (EAS)" → Run workflow (escolhe plataforma e perfil).
+#   - Tag: `git tag mobile-v1.0.0 && git push origin mobile-v1.0.0` → build de produção
+#     das duas plataformas com envio automático (App Store Connect / Google Play interno).
+# Precisa do secret EXPO_TOKEN (expo.dev → Account settings → Access tokens).
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Plataforma
+        type: choice
+        options: [all, ios, android]
+        default: all
+      profile:
+        description: Perfil do eas.json
+        type: choice
+        options: [production, preview, development]
+        default: production
+      submit:
+        description: Enviar às lojas após o build (só produção)
+        type: boolean
+        default: true
+  push:
+    tags: ['mobile-v*']
+
+concurrency:
+  group: mobile-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: EAS build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    env:
+      PLATFORM: ${{ inputs.platform || 'all' }}
+      PROFILE: ${{ inputs.profile || 'production' }}
+      SUBMIT: ${{ github.event_name == 'push' || (inputs.submit && inputs.profile == 'production') }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
+      - run: pnpm --filter @faixa-certa/shared build
+        working-directory: .
+      - run: pnpm typecheck && pnpm lint
+      - name: Build (e envio, se pedido)
+        run: |
+          ARGS="--platform $PLATFORM --profile $PROFILE --non-interactive --no-wait"
+          if [ "$SUBMIT" = "true" ]; then ARGS="$ARGS --auto-submit"; fi
+          eas build $ARGS

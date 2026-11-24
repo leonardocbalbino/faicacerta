@@ -12,11 +12,12 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/tsconfig/package.json packages/tsconfig/
 COPY packages/shared/package.json packages/shared/
 COPY apps/web/package.json apps/web/
+COPY apps/mobile/package.json apps/mobile/
 COPY apps/api/package.json apps/api/prisma.config.ts apps/api/
 COPY apps/api/prisma apps/api/prisma
-# O prisma.config.ts exige DATABASE_URL até para o `prisma generate` (postinstall); valor fictício.
+# O app mobile fica de fora (React Native não é usado no servidor).
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
-    DATABASE_URL=postgresql://build:build@localhost:5432/build pnpm install --frozen-lockfile
+    pnpm install --frozen-lockfile --filter '!@faixa-certa/mobile'
 COPY . .
 # VITE_API_URL vazio: o painel chama /v1 no mesmo domínio (o nginx encaminha para a API).
 RUN pnpm --filter @faixa-certa/shared build \

@@ -4,9 +4,9 @@ Apostila digital por faixa para exames de graduação no judô: técnicas com fo
 
 | Pasta               | O que é                                                | Status       |
 | ------------------- | ------------------------------------------------------ | ------------ |
-| `apps/api`          | API REST (NestJS 12 + Prisma 7 + PostgreSQL)           | Etapas 1 e 2 |
+| `apps/api`          | API REST (NestJS 12 + Prisma 7 + PostgreSQL)           | Etapas 1 a 3 |
 | `apps/web`          | Painel web (admin e professor) — React + Vite          | Etapa 2: CMS |
-| `apps/mobile`       | App mobile (Expo + Expo Router)                        | Etapa 3      |
+| `apps/mobile`       | App mobile (Expo SDK 58 + Expo Router)                 | Etapa 3      |
 | `packages/shared`   | Schemas Zod, enums, i18n pt-BR e cliente da API gerado | Em uso       |
 | `packages/tsconfig` | Configurações base do TypeScript                       | Em uso       |
 | `docs/design`       | Layout aprovado, tokens e padrões de tela              | Referência   |

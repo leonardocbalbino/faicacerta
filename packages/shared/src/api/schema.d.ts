@@ -852,6 +852,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/catalog/programs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Catalog_programs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/catalog/belts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Catalog_belt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/catalog/techniques/{slugOrId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Catalog_technique"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/catalog/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Catalog_categories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/catalog/glossary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Catalog_glossary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/catalog/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Catalog_search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -4905,6 +5001,344 @@ export interface operations {
                         status: "DRAFT" | "REVIEW" | "PUBLISHED" | "ARCHIVED";
                         publishedAt: string | null;
                         updatedAt: string;
+                    };
+                };
+            };
+        };
+    };
+    Catalog_programs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        name: string;
+                        federation: string | null;
+                        description: string | null;
+                        isBase: boolean;
+                        belts: {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            colors: string[];
+                            order: number;
+                            minAge: number | null;
+                            description: string | null;
+                            techniqueCount: number;
+                        }[];
+                    }[];
+                };
+            };
+        };
+    };
+    Catalog_belt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        name: string;
+                        colors: string[];
+                        order: number;
+                        minAge: number | null;
+                        description: string | null;
+                        techniqueCount: number;
+                        program: {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                        };
+                        requirements: {
+                            /** @enum {string} */
+                            type: "MANDATORY" | "OPTIONAL";
+                            order: number;
+                            technique: {
+                                /** Format: uuid */
+                                id: string;
+                                slug: string;
+                                japaneseName: string;
+                                japaneseScript: string | null;
+                                translation: string;
+                                category: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    slug: string;
+                                    name: string;
+                                    icon: string | null;
+                                    parent: {
+                                        /** Format: uuid */
+                                        id: string;
+                                        name: string;
+                                    } | null;
+                                };
+                                thumbUrl: string | null;
+                                videoDurationMs: number | null;
+                            };
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    Catalog_technique: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slugOrId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        slug: string;
+                        japaneseName: string;
+                        japaneseScript: string | null;
+                        translation: string;
+                        category: {
+                            /** Format: uuid */
+                            id: string;
+                            slug: string;
+                            name: string;
+                            icon: string | null;
+                            parent: {
+                                /** Format: uuid */
+                                id: string;
+                                name: string;
+                            } | null;
+                        };
+                        thumbUrl: string | null;
+                        videoDurationMs: number | null;
+                        richContent: ({
+                            /** @enum {string} */
+                            type: "doc";
+                            content?: unknown[];
+                        } & {
+                            [key: string]: unknown;
+                        }) | null;
+                        keyPoints: string[];
+                        commonMistakes: string[];
+                        examinerCriteria: string | null;
+                        pronunciationAudioUrl: string | null;
+                        video: {
+                            /** @enum {string} */
+                            type: "VIDEO" | "IMAGE";
+                            url: string;
+                            offlineUrl: string | null;
+                            thumbUrl: string | null;
+                            durationMs: number | null;
+                            width: number | null;
+                            height: number | null;
+                            caption: string | null;
+                        } | null;
+                        steps: {
+                            /** @enum {string} */
+                            type: "VIDEO" | "IMAGE";
+                            url: string;
+                            offlineUrl: string | null;
+                            thumbUrl: string | null;
+                            durationMs: number | null;
+                            width: number | null;
+                            height: number | null;
+                            caption: string | null;
+                        }[];
+                        gallery: {
+                            /** @enum {string} */
+                            type: "VIDEO" | "IMAGE";
+                            url: string;
+                            offlineUrl: string | null;
+                            thumbUrl: string | null;
+                            durationMs: number | null;
+                            width: number | null;
+                            height: number | null;
+                            caption: string | null;
+                        }[];
+                        related: {
+                            /** Format: uuid */
+                            id: string;
+                            slug: string;
+                            japaneseName: string;
+                            japaneseScript: string | null;
+                            translation: string;
+                            category: {
+                                /** Format: uuid */
+                                id: string;
+                                slug: string;
+                                name: string;
+                                icon: string | null;
+                                parent: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    name: string;
+                                } | null;
+                            };
+                            thumbUrl: string | null;
+                            videoDurationMs: number | null;
+                        }[];
+                        belts: {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            colors: string[];
+                            /** Format: uuid */
+                            programId: string;
+                        }[];
+                        updatedAt: string;
+                    };
+                };
+            };
+        };
+    };
+    Catalog_categories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        slug: string;
+                        name: string;
+                        icon: string | null;
+                        parent: {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                        } | null;
+                    }[];
+                };
+            };
+        };
+    };
+    Catalog_glossary: {
+        parameters: {
+            query?: {
+                q?: string;
+                categoryId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        japanese: string;
+                        kanji: string | null;
+                        translation: string;
+                        description: string | null;
+                        category: {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                        } | null;
+                        audioUrl: string | null;
+                    }[];
+                };
+            };
+        };
+    };
+    Catalog_search: {
+        parameters: {
+            query: {
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        techniques: {
+                            /** Format: uuid */
+                            id: string;
+                            slug: string;
+                            japaneseName: string;
+                            japaneseScript: string | null;
+                            translation: string;
+                            category: {
+                                /** Format: uuid */
+                                id: string;
+                                slug: string;
+                                name: string;
+                                icon: string | null;
+                                parent: {
+                                    /** Format: uuid */
+                                    id: string;
+                                    name: string;
+                                } | null;
+                            };
+                            thumbUrl: string | null;
+                            videoDurationMs: number | null;
+                        }[];
+                        glossary: {
+                            /** Format: uuid */
+                            id: string;
+                            japanese: string;
+                            kanji: string | null;
+                            translation: string;
+                            description: string | null;
+                            category: {
+                                /** Format: uuid */
+                                id: string;
+                                name: string;
+                            } | null;
+                            audioUrl: string | null;
+                        }[];
                     };
                 };
             };
