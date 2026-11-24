@@ -20,6 +20,17 @@
     },
     "test:e2e": {
       "dependsOn": ["^build"],
+      "passThroughEnv": [
+        "DATABASE_URL",
+        "DATABASE_URL_TEST",
+        "REDIS_URL",
+        "JWT_*",
+        "DATA_ENCRYPTION_KEY",
+        "S3_*",
+        "SMTP_*",
+        "FFMPEG_PATH",
+        "FFPROBE_PATH"
+      ],
       "cache": false
     }
   }

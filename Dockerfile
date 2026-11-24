@@ -7,9 +7,17 @@ FROM node:24-bookworm-slim AS build
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH TURBO_TELEMETRY_DISABLED=1
 RUN corepack enable
 WORKDIR /repo
-COPY . .
+# Só os manifestos primeiro: o install fica em cache enquanto o lockfile não mudar.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/tsconfig/package.json packages/tsconfig/
+COPY packages/shared/package.json packages/shared/
+COPY apps/web/package.json apps/web/
+COPY apps/api/package.json apps/api/prisma.config.ts apps/api/
+COPY apps/api/prisma apps/api/prisma
 # O prisma.config.ts exige DATABASE_URL até para o `prisma generate` (postinstall); valor fictício.
-RUN DATABASE_URL=postgresql://build:build@localhost:5432/build pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+    DATABASE_URL=postgresql://build:build@localhost:5432/build pnpm install --frozen-lockfile
+COPY . .
 # VITE_API_URL vazio: o painel chama /v1 no mesmo domínio (o nginx encaminha para a API).
 RUN pnpm --filter @faixa-certa/shared build \
  && pnpm --filter @faixa-certa/api build \
