@@ -5,38 +5,20 @@ import type {
   CatalogProgram,
   CatalogSearchResult,
   CatalogTechnique,
+  CatalogTechniqueItem,
+  TimelineEvent,
+  TimelineEventInput,
 } from '@faixa-certa/shared';
-import { createApiClient } from '@faixa-certa/shared/api';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { api, unwrap } from './http';
 
-/** Em desenvolvimento, aponte para a API local com EXPO_PUBLIC_API_URL (ex.: http://192.168.0.10:3000). */
-export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://app-faixacerta.com.br';
-
-export const api = createApiClient({ baseUrl: API_URL });
-
-export class ApiError extends Error {
-  constructor(
-    readonly status: number,
-    message: string,
-  ) {
-    super(message);
-  }
-}
-
-/** Converte a resposta do openapi-fetch em valor ou erro (para o React Query). */
-async function unwrap<T>(
-  call: Promise<{ data?: unknown; error?: unknown; response: Response }>,
-): Promise<T> {
-  const { data, error, response } = await call;
-  if (error !== undefined || data === undefined) {
-    const detail =
-      error && typeof error === 'object' && 'detail' in error ? String(error.detail) : undefined;
-    throw new ApiError(response.status, detail ?? `Erro ${response.status}`);
-  }
-  return data as T;
-}
+export { API_URL, ApiError, errorMessage } from './http';
 
 const HOUR = 60 * 60 * 1000;
+
+// -----------------------------------------------------------------------------
+// Catálogo (público)
+// -----------------------------------------------------------------------------
 
 export function usePrograms() {
   return useQuery({
@@ -70,6 +52,21 @@ export function useTechnique(slug: string | undefined) {
     enabled: Boolean(slug),
     // As URLs assinadas de mídia expiram; recarrega com folga.
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+/** Técnicas por id (lista de favoritas). */
+export function useTechniquesById(ids: string[]) {
+  const key = [...ids].sort().join(',');
+  return useQuery({
+    queryKey: ['catalog', 'techniques', key],
+    queryFn: () =>
+      unwrap<CatalogTechniqueItem[]>(
+        api.GET('/v1/catalog/techniques', { params: { query: { ids: key } } }),
+      ),
+    enabled: ids.length > 0,
+    placeholderData: keepPreviousData,
+    staleTime: 10 * 60 * 1000,
   });
 }
 
@@ -107,5 +104,41 @@ export function useSearch(q: string) {
     enabled: query.length >= 2,
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
+  });
+}
+
+// -----------------------------------------------------------------------------
+// Linha do tempo (logado)
+// -----------------------------------------------------------------------------
+
+const TIMELINE_KEY = ['me', 'timeline'] as const;
+
+export function useTimeline(enabled: boolean) {
+  return useQuery({
+    queryKey: TIMELINE_KEY,
+    queryFn: () => unwrap<TimelineEvent[]>(api.GET('/v1/me/timeline')),
+    enabled,
+  });
+}
+
+export function useSaveTimelineEvent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, input }: { id?: string; input: TimelineEventInput }) =>
+      id
+        ? unwrap<TimelineEvent>(
+            api.PATCH('/v1/me/timeline/{id}', { params: { path: { id } }, body: input }),
+          )
+        : unwrap<TimelineEvent>(api.POST('/v1/me/timeline', { body: input })),
+    onSuccess: () => qc.invalidateQueries({ queryKey: TIMELINE_KEY }),
+  });
+}
+
+export function useDeleteTimelineEvent() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      unwrap<void>(api.DELETE('/v1/me/timeline/{id}', { params: { path: { id } } })),
+    onSuccess: () => qc.invalidateQueries({ queryKey: TIMELINE_KEY }),
   });
 }

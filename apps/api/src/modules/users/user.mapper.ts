@@ -23,6 +23,7 @@ export function toMe(user: UserWithMeRelations, cdnBaseUrl?: string): Me {
     roles: user.roles,
     currentBeltId: user.currentBeltId,
     programId: user.programId,
+    academyName: user.academyName,
     hasPassword: user.passwordHash !== null,
     providers: user.authProviders.map((p) => p.provider),
     createdAt: user.createdAt.toISOString(),

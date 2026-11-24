@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BeltPicker } from '@/components/belt-picker';
 import { BrandMark, PrimaryButton, StateView, Text } from '@/components/ui';
 import { usePrograms } from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 import { usePrefs } from '@/lib/prefs';
 import { colors, GUTTER } from '@/theme';
 
@@ -13,6 +14,7 @@ export default function Onboarding() {
   const insets = useSafeAreaInsets();
   const programs = usePrograms();
   const { chooseBelt } = usePrefs();
+  const { status } = useAuth();
   const program = programs.data?.find((p) => p.isBase) ?? programs.data?.[0];
   const [beltId, setBeltId] = useState<string | null>(null);
 
@@ -20,7 +22,9 @@ export default function Onboarding() {
     const id = selected ?? program?.belts[0]?.id;
     if (!program || !id) return;
     chooseBelt(program.id, id);
-    router.replace('/');
+    // Passo seguinte: login opcional (tela 09), se ainda não tem conta.
+    if (status === 'signedIn') router.replace('/');
+    else router.replace({ pathname: '/entrar', params: { from: 'onboarding' } });
   };
 
   return (

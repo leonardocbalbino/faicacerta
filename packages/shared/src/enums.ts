@@ -126,3 +126,27 @@ export const PlanCode = {
   PRO_YEARLY: 'PRO_YEARLY',
 } as const;
 export type PlanCode = (typeof PlanCode)[keyof typeof PlanCode];
+
+export const ProgressStatus = {
+  NOT_STARTED: 'NOT_STARTED',
+  STUDYING: 'STUDYING',
+  MASTERED: 'MASTERED',
+} as const;
+export type ProgressStatus = (typeof ProgressStatus)[keyof typeof ProgressStatus];
+export const PROGRESS_STATUSES = Object.values(ProgressStatus) as [
+  ProgressStatus,
+  ...ProgressStatus[],
+];
+
+export const TimelineEventType = {
+  GRADUATION: 'GRADUATION',
+  COMPETITION: 'COMPETITION',
+  ACADEMY_CHANGE: 'ACADEMY_CHANGE',
+  SEMINAR: 'SEMINAR',
+  MILESTONE: 'MILESTONE',
+} as const;
+export type TimelineEventType = (typeof TimelineEventType)[keyof typeof TimelineEventType];
+export const TIMELINE_EVENT_TYPES = Object.values(TimelineEventType) as [
+  TimelineEventType,
+  ...TimelineEventType[],
+];

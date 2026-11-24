@@ -1,5 +1,5 @@
 import { Link, router } from 'expo-router';
-import { ArrowRight, BookOpen, Languages, Play, Repeat, Search } from 'lucide-react-native';
+import { ArrowRight, BookOpen, Heart, Languages, Play, Repeat, Search } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,6 +14,8 @@ import {
   Text,
 } from '@/components/ui';
 import { useBelt } from '@/lib/api';
+import { useAuth } from '@/lib/auth';
+import { initials } from '@/lib/format';
 import { formatDuration, greeting, pickOfTheDay, useJourney } from '@/lib/journey';
 import { usePrefs } from '@/lib/prefs';
 import { colors, GUTTER, radii } from '@/theme';
@@ -24,6 +26,7 @@ export default function Home() {
   const { journey, programs } = useJourney();
   const belt = useBelt(journey?.target.id);
   const { isMastered } = usePrefs();
+  const { user } = useAuth();
 
   const requirements = belt.data?.requirements ?? [];
   const total = requirements.length;
@@ -37,17 +40,33 @@ export default function Home() {
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}
     >
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.avatar}>
-            <BrandMark size={30} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={user ? 'Minha conta' : 'Entrar'}
+          onPress={() => router.push(user ? '/conta' : '/entrar')}
+          style={styles.headerLeft}
+        >
+          <View
+            style={[
+              styles.avatar,
+              user && { backgroundColor: journey?.current.colors[0] ?? colors.lime },
+            ]}
+          >
+            {user ? (
+              <Text weight="bold" size={16} color={colors.ink}>
+                {initials(user.name)}
+              </Text>
+            ) : (
+              <BrandMark size={30} />
+            )}
           </View>
           <View style={{ gap: 2 }}>
             <Text variant="muted">{greeting()}</Text>
             <Text variant="display" size={20}>
-              judoca
+              {user ? (user.name.split(' ')[0] ?? user.name) : 'judoca'}
             </Text>
           </View>
-        </View>
+        </Pressable>
         <IconButton accessibilityLabel="Buscar" onPress={() => router.push('/apostila')}>
           <Search size={20} color={colors.text} />
         </IconButton>
@@ -156,9 +175,9 @@ export default function Home() {
               onPress={() => router.push('/glossario')}
             />
             <Shortcut
-              label="Buscar"
-              icon={<Search size={24} color={colors.text} />}
-              onPress={() => router.push('/apostila')}
+              label="Favoritas"
+              icon={<Heart size={24} color={colors.text} />}
+              onPress={() => router.push('/favoritas')}
             />
             <Shortcut
               label="Minha faixa"

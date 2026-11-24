@@ -13,6 +13,7 @@
     "ios": {
       "bundleIdentifier": "faixacerta",
       "supportsTablet": false,
+      "usesAppleSignIn": true,
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -63,7 +64,29 @@
         }
       ],
       "expo-system-ui",
-      "expo-asset"
+      "expo-asset",
+      "expo-secure-store",
+      "expo-sharing",
+      "@react-native-community/datetimepicker",
+      "expo-web-browser",
+      "expo-apple-authentication",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O Faixa Certa usa suas fotos só para montar o card da sua conquista. Nada é enviado aos nossos servidores.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "O Faixa Certa usa suas fotos só para montar o card da sua conquista.",
+          "savePhotosPermission": "O Faixa Certa salva na sua galeria o card da conquista que você criou.",
+          "isAccessMediaLocationEnabled": false,
+          "granularPermissions": ["photo"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

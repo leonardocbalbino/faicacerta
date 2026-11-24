@@ -17,7 +17,71 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
+        patch: operations["Me_update"];
+        trace?: never;
+    };
+    "/v1/me/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Me_remove"];
+        delete?: never;
+        options?: never;
+        head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/v1/me/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Me_state"];
+        put?: never;
+        post: operations["Me_sync"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Me_timeline"];
+        put?: never;
+        post: operations["Me_createEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/me/timeline/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["Me_deleteEvent"];
+        options?: never;
+        head?: never;
+        patch: operations["Me_updateEvent"];
         trace?: never;
     };
     "/v1/auth/register": {
@@ -884,6 +948,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/catalog/techniques": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Catalog_techniquesById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/catalog/techniques/{slugOrId}": {
         parameters: {
             query?: never;
@@ -989,9 +1069,365 @@ export interface operations {
                         currentBeltId: string | null;
                         /** Format: uuid */
                         programId: string | null;
+                        academyName: string | null;
                         hasPassword: boolean;
                         providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                         createdAt: string;
+                    };
+                };
+            };
+        };
+    };
+    Me_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    academyName?: string | null;
+                    teacherName?: string | null;
+                    /** Format: uuid */
+                    programId?: string | null;
+                    /** Format: uuid */
+                    currentBeltId?: string | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        email: string | null;
+                        emailVerified: boolean;
+                        name: string;
+                        avatarUrl: string | null;
+                        birthDate: string | null;
+                        isMinor: boolean | null;
+                        roles: ("USER" | "CONTENT_EDITOR" | "ADMIN")[];
+                        /** Format: uuid */
+                        currentBeltId: string | null;
+                        /** Format: uuid */
+                        programId: string | null;
+                        academyName: string | null;
+                        hasPassword: boolean;
+                        providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
+                        createdAt: string;
+                    };
+                };
+            };
+        };
+    };
+    Me_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    confirm: "EXCLUIR";
+                };
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Me_state: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        progress: {
+                            /** Format: uuid */
+                            techniqueId: string;
+                            /** @enum {string} */
+                            status: "NOT_STARTED" | "STUDYING" | "MASTERED";
+                            updatedAt: string;
+                            approvedAt: string | null;
+                        }[];
+                        favorites: {
+                            /** Format: uuid */
+                            techniqueId: string;
+                            updatedAt: string;
+                        }[];
+                        serverTime: string;
+                    };
+                };
+            };
+        };
+    };
+    Me_sync: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @default [] */
+                    progress?: {
+                        /** Format: uuid */
+                        techniqueId: string;
+                        /** @enum {string} */
+                        status: "NOT_STARTED" | "STUDYING" | "MASTERED";
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                    /** @default [] */
+                    favorites?: {
+                        /** Format: uuid */
+                        techniqueId: string;
+                        favorite: boolean;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        progress: {
+                            /** Format: uuid */
+                            techniqueId: string;
+                            /** @enum {string} */
+                            status: "NOT_STARTED" | "STUDYING" | "MASTERED";
+                            updatedAt: string;
+                            approvedAt: string | null;
+                        }[];
+                        favorites: {
+                            /** Format: uuid */
+                            techniqueId: string;
+                            updatedAt: string;
+                        }[];
+                        serverTime: string;
+                    };
+                };
+            };
+        };
+    };
+    Me_timeline: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        /** @enum {string} */
+                        type: "GRADUATION" | "COMPETITION" | "ACADEMY_CHANGE" | "SEMINAR" | "MILESTONE";
+                        date: string;
+                        title: string;
+                        description: string | null;
+                        belt: {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            colors: string[];
+                        } | null;
+                        extra: {
+                            /** @enum {string|null} */
+                            medal?: "GOLD" | "SILVER" | "BRONZE" | null;
+                            category?: string | null;
+                            fights?: number | null;
+                            fromAcademy?: string | null;
+                            toAcademy?: string | null;
+                        } | null;
+                        createdAt: string;
+                        updatedAt: string;
+                    }[];
+                };
+            };
+        };
+    };
+    Me_createEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    type: "GRADUATION" | "COMPETITION" | "ACADEMY_CHANGE" | "SEMINAR" | "MILESTONE";
+                    /** Format: date */
+                    date: string;
+                    title: string;
+                    description?: string | null;
+                    /** Format: uuid */
+                    beltId?: string | null;
+                    extra?: {
+                        /** @enum {string|null} */
+                        medal?: "GOLD" | "SILVER" | "BRONZE" | null;
+                        category?: string | null;
+                        fights?: number | null;
+                        fromAcademy?: string | null;
+                        toAcademy?: string | null;
+                    } | null;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        /** @enum {string} */
+                        type: "GRADUATION" | "COMPETITION" | "ACADEMY_CHANGE" | "SEMINAR" | "MILESTONE";
+                        date: string;
+                        title: string;
+                        description: string | null;
+                        belt: {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            colors: string[];
+                        } | null;
+                        extra: {
+                            /** @enum {string|null} */
+                            medal?: "GOLD" | "SILVER" | "BRONZE" | null;
+                            category?: string | null;
+                            fights?: number | null;
+                            fromAcademy?: string | null;
+                            toAcademy?: string | null;
+                        } | null;
+                        createdAt: string;
+                        updatedAt: string;
+                    };
+                };
+            };
+        };
+    };
+    Me_deleteEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Me_updateEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    type?: "GRADUATION" | "COMPETITION" | "ACADEMY_CHANGE" | "SEMINAR" | "MILESTONE";
+                    /** Format: date */
+                    date?: string;
+                    title?: string;
+                    description?: string | null;
+                    /** Format: uuid */
+                    beltId?: string | null;
+                    extra?: {
+                        /** @enum {string|null} */
+                        medal?: "GOLD" | "SILVER" | "BRONZE" | null;
+                        category?: string | null;
+                        fights?: number | null;
+                        fromAcademy?: string | null;
+                        toAcademy?: string | null;
+                    } | null;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        /** @enum {string} */
+                        type: "GRADUATION" | "COMPETITION" | "ACADEMY_CHANGE" | "SEMINAR" | "MILESTONE";
+                        date: string;
+                        title: string;
+                        description: string | null;
+                        belt: {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            colors: string[];
+                        } | null;
+                        extra: {
+                            /** @enum {string|null} */
+                            medal?: "GOLD" | "SILVER" | "BRONZE" | null;
+                            category?: string | null;
+                            fights?: number | null;
+                            fromAcademy?: string | null;
+                            toAcademy?: string | null;
+                        } | null;
+                        createdAt: string;
+                        updatedAt: string;
                     };
                 };
             };
@@ -1048,6 +1484,7 @@ export interface operations {
                             currentBeltId: string | null;
                             /** Format: uuid */
                             programId: string | null;
+                            academyName: string | null;
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -1098,6 +1535,7 @@ export interface operations {
                             currentBeltId: string | null;
                             /** Format: uuid */
                             programId: string | null;
+                            academyName: string | null;
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -1147,6 +1585,7 @@ export interface operations {
                             currentBeltId: string | null;
                             /** Format: uuid */
                             programId: string | null;
+                            academyName: string | null;
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -1220,6 +1659,7 @@ export interface operations {
                             currentBeltId: string | null;
                             /** Format: uuid */
                             programId: string | null;
+                            academyName: string | null;
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -1271,6 +1711,7 @@ export interface operations {
                             currentBeltId: string | null;
                             /** Format: uuid */
                             programId: string | null;
+                            academyName: string | null;
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -5100,6 +5541,48 @@ export interface operations {
                             };
                         }[];
                     };
+                };
+            };
+        };
+    };
+    Catalog_techniquesById: {
+        parameters: {
+            query: {
+                ids: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        slug: string;
+                        japaneseName: string;
+                        japaneseScript: string | null;
+                        translation: string;
+                        category: {
+                            /** Format: uuid */
+                            id: string;
+                            slug: string;
+                            name: string;
+                            icon: string | null;
+                            parent: {
+                                /** Format: uuid */
+                                id: string;
+                                name: string;
+                            } | null;
+                        };
+                        thumbUrl: string | null;
+                        videoDurationMs: number | null;
+                    }[];
                 };
             };
         };

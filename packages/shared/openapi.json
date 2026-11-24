@@ -63,6 +63,10 @@
                       "format": "uuid",
                       "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                     },
+                    "academyName": {
+                      "nullable": true,
+                      "type": "string"
+                    },
                     "hasPassword": {
                       "type": "boolean"
                     },
@@ -92,6 +96,7 @@
                     "roles",
                     "currentBeltId",
                     "programId",
+                    "academyName",
                     "hasPassword",
                     "providers",
                     "createdAt"
@@ -100,6 +105,1061 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Conta"
+        ]
+      },
+      "patch": {
+        "operationId": "Me_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 80
+                  },
+                  "academyName": {
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "teacherName": {
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 80
+                  },
+                  "programId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "currentBeltId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "email": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "emailVerified": {
+                      "type": "boolean"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "avatarUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "birthDate": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "isMinor": {
+                      "nullable": true,
+                      "type": "boolean"
+                    },
+                    "roles": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "USER",
+                          "CONTENT_EDITOR",
+                          "ADMIN"
+                        ]
+                      }
+                    },
+                    "currentBeltId": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "programId": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "academyName": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "hasPassword": {
+                      "type": "boolean"
+                    },
+                    "providers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "EMAIL",
+                          "GOOGLE",
+                          "APPLE"
+                        ]
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "email",
+                    "emailVerified",
+                    "name",
+                    "avatarUrl",
+                    "birthDate",
+                    "isMinor",
+                    "roles",
+                    "currentBeltId",
+                    "programId",
+                    "academyName",
+                    "hasPassword",
+                    "providers",
+                    "createdAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Conta"
+        ]
+      }
+    },
+    "/v1/me/delete": {
+      "post": {
+        "operationId": "Me_remove",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "confirm": {
+                    "type": "string",
+                    "enum": [
+                      "EXCLUIR"
+                    ]
+                  }
+                },
+                "required": [
+                  "confirm"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Conta"
+        ]
+      }
+    },
+    "/v1/me/sync": {
+      "get": {
+        "operationId": "Me_state",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "progress": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "techniqueId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "NOT_STARTED",
+                              "STUDYING",
+                              "MASTERED"
+                            ]
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "approvedAt": {
+                            "nullable": true,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "techniqueId",
+                          "status",
+                          "updatedAt",
+                          "approvedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "favorites": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "techniqueId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "techniqueId",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "serverTime": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "progress",
+                    "favorites",
+                    "serverTime"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Conta"
+        ]
+      },
+      "post": {
+        "operationId": "Me_sync",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "progress": {
+                    "default": [],
+                    "maxItems": 2000,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "techniqueId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "NOT_STARTED",
+                            "STUDYING",
+                            "MASTERED"
+                          ]
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        }
+                      },
+                      "required": [
+                        "techniqueId",
+                        "status",
+                        "updatedAt"
+                      ]
+                    }
+                  },
+                  "favorites": {
+                    "default": [],
+                    "maxItems": 2000,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "techniqueId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "favorite": {
+                          "type": "boolean"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        }
+                      },
+                      "required": [
+                        "techniqueId",
+                        "favorite",
+                        "updatedAt"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "progress": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "techniqueId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "NOT_STARTED",
+                              "STUDYING",
+                              "MASTERED"
+                            ]
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "approvedAt": {
+                            "nullable": true,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "techniqueId",
+                          "status",
+                          "updatedAt",
+                          "approvedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "favorites": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "techniqueId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "techniqueId",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "serverTime": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "progress",
+                    "favorites",
+                    "serverTime"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Conta"
+        ]
+      }
+    },
+    "/v1/me/timeline": {
+      "get": {
+        "operationId": "Me_timeline",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "GRADUATION",
+                          "COMPETITION",
+                          "ACADEMY_CHANGE",
+                          "SEMINAR",
+                          "MILESTONE"
+                        ]
+                      },
+                      "date": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "belt": {
+                        "nullable": true,
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "colors": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "colors"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "extra": {
+                        "nullable": true,
+                        "type": "object",
+                        "properties": {
+                          "medal": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "GOLD",
+                              "SILVER",
+                              "BRONZE"
+                            ]
+                          },
+                          "category": {
+                            "nullable": true,
+                            "type": "string",
+                            "maxLength": 80
+                          },
+                          "fights": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 50
+                          },
+                          "fromAcademy": {
+                            "nullable": true,
+                            "type": "string",
+                            "maxLength": 120
+                          },
+                          "toAcademy": {
+                            "nullable": true,
+                            "type": "string",
+                            "maxLength": 120
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "date",
+                      "title",
+                      "description",
+                      "belt",
+                      "extra",
+                      "createdAt",
+                      "updatedAt"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Conta"
+        ]
+      },
+      "post": {
+        "operationId": "Me_createEvent",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "GRADUATION",
+                      "COMPETITION",
+                      "ACADEMY_CHANGE",
+                      "SEMINAR",
+                      "MILESTONE"
+                    ]
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  },
+                  "description": {
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 1000
+                  },
+                  "beltId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "extra": {
+                    "nullable": true,
+                    "type": "object",
+                    "properties": {
+                      "medal": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "GOLD",
+                          "SILVER",
+                          "BRONZE"
+                        ]
+                      },
+                      "category": {
+                        "nullable": true,
+                        "type": "string",
+                        "maxLength": 80
+                      },
+                      "fights": {
+                        "nullable": true,
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 50
+                      },
+                      "fromAcademy": {
+                        "nullable": true,
+                        "type": "string",
+                        "maxLength": 120
+                      },
+                      "toAcademy": {
+                        "nullable": true,
+                        "type": "string",
+                        "maxLength": 120
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "date",
+                  "title"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "GRADUATION",
+                        "COMPETITION",
+                        "ACADEMY_CHANGE",
+                        "SEMINAR",
+                        "MILESTONE"
+                      ]
+                    },
+                    "date": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "belt": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "colors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "colors"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "extra": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "medal": {
+                          "nullable": true,
+                          "type": "string",
+                          "enum": [
+                            "GOLD",
+                            "SILVER",
+                            "BRONZE"
+                          ]
+                        },
+                        "category": {
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 80
+                        },
+                        "fights": {
+                          "nullable": true,
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 50
+                        },
+                        "fromAcademy": {
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 120
+                        },
+                        "toAcademy": {
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 120
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type",
+                    "date",
+                    "title",
+                    "description",
+                    "belt",
+                    "extra",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Conta"
+        ]
+      }
+    },
+    "/v1/me/timeline/{id}": {
+      "patch": {
+        "operationId": "Me_updateEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "GRADUATION",
+                      "COMPETITION",
+                      "ACADEMY_CHANGE",
+                      "SEMINAR",
+                      "MILESTONE"
+                    ]
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 120
+                  },
+                  "description": {
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 1000
+                  },
+                  "beltId": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "extra": {
+                    "nullable": true,
+                    "type": "object",
+                    "properties": {
+                      "medal": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "GOLD",
+                          "SILVER",
+                          "BRONZE"
+                        ]
+                      },
+                      "category": {
+                        "nullable": true,
+                        "type": "string",
+                        "maxLength": 80
+                      },
+                      "fights": {
+                        "nullable": true,
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 50
+                      },
+                      "fromAcademy": {
+                        "nullable": true,
+                        "type": "string",
+                        "maxLength": 120
+                      },
+                      "toAcademy": {
+                        "nullable": true,
+                        "type": "string",
+                        "maxLength": 120
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "GRADUATION",
+                        "COMPETITION",
+                        "ACADEMY_CHANGE",
+                        "SEMINAR",
+                        "MILESTONE"
+                      ]
+                    },
+                    "date": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "belt": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "colors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "colors"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "extra": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "medal": {
+                          "nullable": true,
+                          "type": "string",
+                          "enum": [
+                            "GOLD",
+                            "SILVER",
+                            "BRONZE"
+                          ]
+                        },
+                        "category": {
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 80
+                        },
+                        "fights": {
+                          "nullable": true,
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 50
+                        },
+                        "fromAcademy": {
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 120
+                        },
+                        "toAcademy": {
+                          "nullable": true,
+                          "type": "string",
+                          "maxLength": 120
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "type",
+                    "date",
+                    "title",
+                    "description",
+                    "belt",
+                    "extra",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Conta"
+        ]
+      },
+      "delete": {
+        "operationId": "Me_deleteEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
           }
         },
         "security": [
@@ -257,6 +1317,10 @@
                           "format": "uuid",
                           "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                         },
+                        "academyName": {
+                          "nullable": true,
+                          "type": "string"
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -286,6 +1350,7 @@
                         "roles",
                         "currentBeltId",
                         "programId",
+                        "academyName",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -419,6 +1484,10 @@
                           "format": "uuid",
                           "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                         },
+                        "academyName": {
+                          "nullable": true,
+                          "type": "string"
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -448,6 +1517,7 @@
                         "roles",
                         "currentBeltId",
                         "programId",
+                        "academyName",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -572,6 +1642,10 @@
                           "format": "uuid",
                           "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                         },
+                        "academyName": {
+                          "nullable": true,
+                          "type": "string"
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -601,6 +1675,7 @@
                         "roles",
                         "currentBeltId",
                         "programId",
+                        "academyName",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -762,6 +1837,10 @@
                           "format": "uuid",
                           "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                         },
+                        "academyName": {
+                          "nullable": true,
+                          "type": "string"
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -791,6 +1870,7 @@
                         "roles",
                         "currentBeltId",
                         "programId",
+                        "academyName",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -927,6 +2007,10 @@
                           "format": "uuid",
                           "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                         },
+                        "academyName": {
+                          "nullable": true,
+                          "type": "string"
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -956,6 +2040,7 @@
                         "roles",
                         "currentBeltId",
                         "programId",
+                        "academyName",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -14107,6 +15192,127 @@
                     "requirements"
                   ],
                   "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Catálogo"
+        ]
+      }
+    },
+    "/v1/catalog/techniques": {
+      "get": {
+        "operationId": "Catalog_techniquesById",
+        "parameters": [
+          {
+            "name": "ids",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "slug": {
+                        "type": "string"
+                      },
+                      "japaneseName": {
+                        "type": "string"
+                      },
+                      "japaneseScript": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "translation": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "icon": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "parent": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "slug",
+                          "name",
+                          "icon",
+                          "parent"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "thumbUrl": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "videoDurationMs": {
+                        "nullable": true,
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "slug",
+                      "japaneseName",
+                      "japaneseScript",
+                      "translation",
+                      "category",
+                      "thumbUrl",
+                      "videoDurationMs"
+                    ],
+                    "additionalProperties": false
+                  }
                 }
               }
             }

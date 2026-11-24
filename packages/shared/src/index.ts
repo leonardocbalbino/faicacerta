@@ -7,5 +7,6 @@ export * from './schemas/auth.js';
 export * from './schemas/catalog.js';
 export * from './schemas/common.js';
 export * from './schemas/content.js';
+export * from './schemas/journey.js';
 export * from './schemas/media.js';
 export * from './utils/age.js';

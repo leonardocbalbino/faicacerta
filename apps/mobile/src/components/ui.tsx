@@ -276,7 +276,15 @@ export function BeltSwatch({
 }
 
 /** Símbolo do Faixa Certa (o nó da faixa). */
-export function BrandMark({ size = 40, ink = colors.ink, knot = colors.lime }) {
+export function BrandMark({
+  size = 40,
+  ink = colors.ink as string,
+  knot = colors.lime as string,
+}: {
+  size?: number;
+  ink?: string;
+  knot?: string;
+}) {
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100" fill="none">
       <Path d="M45 56 33 84" stroke={ink} strokeWidth={12} strokeLinecap="round" />

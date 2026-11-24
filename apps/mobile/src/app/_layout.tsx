@@ -16,6 +16,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider, useAuth } from '@/lib/auth';
 import { PrefsProvider, usePrefs } from '@/lib/prefs';
 import { colors } from '@/theme';
 
@@ -43,22 +44,29 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <PrefsProvider>
-          <StatusBar style="light" />
-          {fontsReady && <Navigator />}
+          <AuthProvider>
+            <StatusBar style="light" />
+            {fontsReady && <Navigator />}
+          </AuthProvider>
         </PrefsProvider>
       </QueryClientProvider>
     </SafeAreaProvider>
   );
 }
 
+const MODAL = { presentation: 'modal', animation: 'slide_from_bottom' } as const;
+
 function Navigator() {
   const { ready } = usePrefs();
+  const { status } = useAuth();
+  // Espera a sessão ser restaurada para não piscar a tela de login.
+  const loaded = ready && status !== 'loading';
 
   useEffect(() => {
-    if (ready) SplashScreen.hideAsync().catch(() => undefined);
-  }, [ready]);
+    if (loaded) SplashScreen.hideAsync().catch(() => undefined);
+  }, [loaded]);
 
-  if (!ready) return null;
+  if (!loaded) return null;
   return (
     <Stack
       screenOptions={{
@@ -70,10 +78,15 @@ function Navigator() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="onboarding" options={{ animation: 'fade', gestureEnabled: false }} />
       <Stack.Screen name="tecnica/[slug]" />
-      <Stack.Screen
-        name="faixas"
-        options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
-      />
+      <Stack.Screen name="faixas" options={MODAL} />
+      <Stack.Screen name="entrar" options={{ animation: 'fade' }} />
+      <Stack.Screen name="entrar-email" />
+      <Stack.Screen name="cadastro" />
+      <Stack.Screen name="conta" />
+      <Stack.Screen name="favoritas" />
+      <Stack.Screen name="marco" options={MODAL} />
+      <Stack.Screen name="card" />
+      <Stack.Screen name="card-foto" />
     </Stack>
   );
 }

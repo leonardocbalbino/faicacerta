@@ -3,7 +3,7 @@ import { useEvent } from 'expo';
 import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { Check, ChevronLeft, Volume2 } from 'lucide-react-native';
+import { Check, ChevronLeft, Heart, Volume2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -208,7 +208,32 @@ function Hero({ t, top }: { t: CatalogTechnique; top: number }) {
       <View style={[styles.heroBack, { top: top + 8 }]}>
         <BackButton overlay />
       </View>
+      <View style={[styles.heroFav, { top: top + 8 }]}>
+        <FavoriteButton techniqueId={t.id} />
+      </View>
     </View>
+  );
+}
+
+function FavoriteButton({ techniqueId }: { techniqueId: string }) {
+  const { isFavorite, toggleFavorite } = usePrefs();
+  const on = isFavorite(techniqueId);
+  return (
+    <IconButton
+      overlay
+      accessibilityLabel={on ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
+      accessibilityState={{ selected: on }}
+      onPress={() => {
+        toggleFavorite(techniqueId);
+        Haptics.selectionAsync().catch(() => undefined);
+      }}
+    >
+      <Heart
+        size={20}
+        color={on ? colors.lime : colors.text}
+        fill={on ? colors.lime : 'transparent'}
+      />
+    </IconButton>
   );
 }
 
@@ -304,6 +329,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   heroBack: { position: 'absolute', left: 16 },
+  heroFav: { position: 'absolute', right: 16 },
   heroBar: {
     position: 'absolute',
     left: 16,

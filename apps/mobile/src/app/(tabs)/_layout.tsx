@@ -1,10 +1,10 @@
 import { Redirect, Tabs } from 'expo-router';
-import { BookOpen, House, Languages } from 'lucide-react-native';
+import { BookOpen, House, Languages, Route } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePrefs } from '@/lib/prefs';
 import { colors, fonts } from '@/theme';
 
-/** Barra inferior. Simulado, Jornada e Turma entram nas próximas etapas. */
+/** Barra inferior. Simulado (Etapa 4) e Turma (Etapa 7) entram depois. */
 export default function TabsLayout() {
   const { onboarded } = usePrefs();
   const insets = useSafeAreaInsets();
@@ -42,6 +42,13 @@ export default function TabsLayout() {
         options={{
           title: 'Glossário',
           tabBarIcon: ({ color }) => <Languages size={22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="jornada"
+        options={{
+          title: 'Jornada',
+          tabBarIcon: ({ color }) => <Route size={22} color={color} />,
         }}
       />
     </Tabs>

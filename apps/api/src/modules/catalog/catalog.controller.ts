@@ -8,8 +8,12 @@ import {
   catalogProgramSchema,
   catalogSearchQuerySchema,
   catalogSearchResultSchema,
+  catalogTechniqueListSchema,
   catalogTechniqueSchema,
+  catalogTechniquesByIdQuerySchema,
   uuidSchema,
+  type CatalogTechniqueItem,
+  type CatalogTechniquesByIdQuery,
   type CatalogBeltDetail,
   type CatalogCategory,
   type CatalogGlossaryQuery,
@@ -42,6 +46,15 @@ export class CatalogController {
   @ApiOkResponse({ standardSchema: catalogBeltDetailSchema })
   belt(@Param('id', { schema: uuidSchema }) id: string): Promise<CatalogBeltDetail> {
     return this.catalog.getBelt(id);
+  }
+
+  /** Técnicas publicadas por id (ex.: favoritos sincronizados de outro aparelho). */
+  @Get('techniques')
+  @ApiOkResponse({ standardSchema: catalogTechniqueListSchema })
+  techniquesById(
+    @Query({ schema: catalogTechniquesByIdQuerySchema }) query: CatalogTechniquesByIdQuery,
+  ): Promise<CatalogTechniqueItem[]> {
+    return this.catalog.techniquesById(query.ids);
   }
 
   @Get('techniques/:slugOrId')

@@ -120,6 +120,7 @@ export const meSchema = z.object({
   roles: z.array(z.enum(ROLES)),
   currentBeltId: z.uuid().nullable(),
   programId: z.uuid().nullable(),
+  academyName: z.string().nullable(),
   hasPassword: z.boolean(),
   providers: z.array(z.enum(AUTH_PROVIDER_TYPES)),
   createdAt: z.string(),

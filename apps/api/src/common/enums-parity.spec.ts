@@ -11,6 +11,8 @@ describe('enums do shared = enums do Prisma', () => {
     ['EntitlementType', shared.EntitlementType, prisma.EntitlementType],
     ['EntitlementSource', shared.EntitlementSource, prisma.EntitlementSource],
     ['PlanCode', shared.PlanCode, prisma.PlanCode],
+    ['ProgressStatus', shared.ProgressStatus, prisma.ProgressStatus],
+    ['TimelineEventType', shared.TimelineEventType, prisma.TimelineEventType],
   ] as const;
 
   it.each(pairs)('%s', (_name, a, b) => {

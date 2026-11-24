@@ -179,6 +179,15 @@ export class CatalogService {
     };
   }
 
+  async techniquesById(ids: string[]): Promise<CatalogTechniqueItem[]> {
+    const rows = await this.prisma.technique.findMany({
+      where: { ...liveTechnique, id: { in: ids } },
+      include: itemInclude,
+      orderBy: { japaneseName: 'asc' },
+    });
+    return Promise.all(rows.map((t) => this.toItem(t)));
+  }
+
   async listCategories(): Promise<CatalogCategory[]> {
     const rows = await this.prisma.category.findMany({
       where: { deletedAt: null },
