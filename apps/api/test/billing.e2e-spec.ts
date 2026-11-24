@@ -316,7 +316,7 @@ describe('admin: monetização', () => {
     await api()
       .post('/v1/billing/store')
       .set(user)
-      .send({ platform: 'android', productId: 'sem_anuncios', purchaseToken: 'GPA.9' })
+      .send({ platform: 'android', productId: 'sem_anuncios', purchaseToken: 'GPA.9999-0000' })
       .expect(200);
     const payments = await api().get('/v1/admin/monetization/payments').set(admin).expect(200);
     expect(payments.body.items[0]).toMatchObject({
