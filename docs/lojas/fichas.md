@@ -8,7 +8,7 @@ Links usados nas duas lojas:
 
 - Política de privacidade: `https://app-faixacerta.com.br/privacidade`
 - Suporte / site: `https://app-faixacerta.com.br`
-- E-mail de contato: `contato@app-faixacerta.com.br` (precisa existir antes do envio)
+- E-mail de contato: `leonardocarlos_@live.com`
 
 ---
 
