@@ -8,7 +8,8 @@ ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH TURBO_TELEMETRY_DISABLED=1
 RUN corepack enable
 WORKDIR /repo
 COPY . .
-RUN pnpm install --frozen-lockfile
+# O prisma.config.ts exige DATABASE_URL até para o `prisma generate` (postinstall); valor fictício.
+RUN DATABASE_URL=postgresql://build:build@localhost:5432/build pnpm install --frozen-lockfile
 # VITE_API_URL vazio: o painel chama /v1 no mesmo domínio (o nginx encaminha para a API).
 RUN pnpm --filter @faixa-certa/shared build \
  && pnpm --filter @faixa-certa/api build \
