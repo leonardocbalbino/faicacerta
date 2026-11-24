@@ -38,13 +38,14 @@ Build e envio pelo EAS (nuvem da Expo), disparados pelo GitHub Actions
 
 Configuração única (feita uma vez):
 
-1. `npx eas-cli@latest login` e `npx eas-cli@latest init` nesta pasta (grava o `projectId` no
-   `app.json`). Commite a alteração.
-2. Gerar um token em expo.dev → _Access tokens_ e salvar como secret `EXPO_TOKEN` no GitHub.
-3. **iOS**: conta Apple Developer; criar o app no App Store Connect com o bundle
-   `br.com.faixacerta.app`; colocar o _Apple ID_ numérico do app em `eas.json` →
-   `submit.production.ios.ascAppId`. O primeiro `eas build -p ios` interativo cria os
-   certificados (ou use uma chave de API do App Store Connect no EAS).
+1. ✅ Projeto EAS `@leonardocbalbino/faixa-certa` (`projectId` no `app.json`).
+2. ✅ Secret `EXPO_TOKEN` no GitHub.
+3. **iOS** (app `6838779704` no App Store Connect, bundle **`faixacerta`**; o Android usa
+   `br.com.faixacerta.app`). O EAS só cria o certificado e o perfil de distribuição em modo
+   interativo, uma vez: rodar `npx eas-cli@latest build -p ios --profile production` num
+   terminal e responder às perguntas. Depois, em `npx eas-cli@latest credentials -p ios` →
+   _production_ → _App Store Connect: Manage your API Key_, cadastrar a chave `.p8` para o
+   EAS Submit. A partir daí o CI faz build e envio ao TestFlight sem interação.
 4. **Android**: conta Google Play Console; criar o app `br.com.faixacerta.app`; o **primeiro
    AAB precisa ser enviado à mão** no Play Console (exigência do Google). Depois, criar uma conta
    de serviço com acesso à API do Play, enviar o JSON ao EAS

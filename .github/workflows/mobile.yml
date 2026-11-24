@@ -56,6 +56,8 @@ jobs:
       - run: pnpm --filter @faixa-certa/shared build
         working-directory: .
       - run: pnpm typecheck && pnpm lint
+      # Credenciais da Apple (certificado, perfil e chave do App Store Connect para o envio)
+      # e a keystore do Android ficam guardadas na Expo; o CI não precisa delas.
       - name: Build (e envio, se pedido)
         run: |
           ARGS="--platform $PLATFORM --profile $PROFILE --non-interactive --no-wait"

@@ -11,7 +11,7 @@
     "primaryColor": "#D4FF3A",
     "description": "Apostila digital por faixa para o exame de graduação no judô.",
     "ios": {
-      "bundleIdentifier": "br.com.faixacerta.app",
+      "bundleIdentifier": "faixacerta",
       "supportsTablet": false,
       "config": {
         "usesNonExemptEncryption": false
