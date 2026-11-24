@@ -1,0 +1,1581 @@
+// =============================================================================
+// Faixa Certa — schema.prisma
+// Convenções:
+//  - PK UUID v7 (ordenável por tempo) gerado pelo Prisma; o app mobile pode
+//    gerar o UUID localmente para entidades criadas offline.
+//  - Nomes em inglês. Tabelas em snake_case (@@map); colunas em camelCase
+//    (padrão do Prisma), por isso o SQL manual usa aspas: "userId".
+//  - Valores monetários sempre em centavos (Int).
+//  - Entidades sincronizáveis (favoritos, listas, progresso, linha do tempo,
+//    flashcards) usam soft delete (deletedAt) como "tombstone" para o /sync.
+//  - Busca (pg_trgm + unaccent), índices únicos parciais e CHECKs que o Prisma
+//    não expressa ficam em prisma/migrations/*_manual_constraints.
+// =============================================================================
+
+// Prisma 7: a URL de conexão fica em prisma.config.ts e o client usa o
+// driver adapter @prisma/adapter-pg.
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+  previewFeatures     = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [pg_trgm, unaccent, citext]
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum Role {
+  USER
+  CONTENT_EDITOR
+  ADMIN
+}
+
+enum AuthProviderType {
+  EMAIL
+  GOOGLE
+  APPLE
+}
+
+enum VerificationTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  GUARDIAN_CONSENT
+}
+
+enum PublicationStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum MediaType {
+  VIDEO
+  IMAGE
+  AUDIO
+  DOCUMENT
+}
+
+enum MediaStatus {
+  PENDING_UPLOAD
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum MediaVisibility {
+  PUBLIC // servido pela CDN sem assinatura (conteúdo base)
+  PRIVATE // URL assinada com expiração (turmas, comprovantes, vídeos de aluno)
+}
+
+enum TechniqueMediaRole {
+  MAIN_VIDEO
+  STEP
+  GALLERY
+}
+
+enum RequirementType {
+  MANDATORY
+  OPTIONAL
+}
+
+enum QuizQuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  IDENTIFY_BY_VIDEO
+  IDENTIFY_BY_IMAGE
+}
+
+enum QuizMode {
+  QUIZ
+  IDENTIFY
+  EXAM_SIMULATION
+}
+
+enum FlashcardKind {
+  TECHNIQUE
+  GLOSSARY
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  STUDYING
+  MASTERED
+}
+
+enum TimelineEventType {
+  GRADUATION
+  COMPETITION
+  ACADEMY_CHANGE
+  SEMINAR
+  MILESTONE
+}
+
+enum ClassStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ClassMemberStatus {
+  PENDING
+  ACTIVE
+  LEFT
+  REMOVED
+}
+
+enum InviteChannel {
+  LINK
+  QR_CODE
+  CODE
+}
+
+enum LessonItemType {
+  BASE_TECHNIQUE
+  CUSTOM_CONTENT
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+  WEB
+}
+
+enum EntitlementType {
+  NO_ADS
+  PRO
+}
+
+enum EntitlementSource {
+  PURCHASE
+  SUBSCRIPTION
+  ADMIN_GRANT
+  CLASS_MEMBERSHIP // calculado em tempo real; só é persistido se o admin quiser congelar
+}
+
+enum PlanCode {
+  NO_ADS
+  PRO_MONTHLY
+  PRO_YEARLY
+}
+
+enum PlanKind {
+  ONE_TIME
+  RECURRING
+}
+
+enum BillingInterval {
+  MONTH
+  YEAR
+}
+
+enum ExistingSubscriberPricePolicy {
+  KEEP_LOCKED_PRICE // assinantes atuais continuam no preço travado
+  APPLY_ON_NEXT_RENEWAL // novo preço vale a partir da próxima renovação
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+enum PaymentProviderCode {
+  MERCADO_PAGO
+  ASAAS
+  EFI
+}
+
+enum GatewayEnvironment {
+  SANDBOX
+  PRODUCTION
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  EXPIRED
+  CANCELED
+  REFUNDED
+  FAILED
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  SUSPENDED
+  CANCELED
+}
+
+enum StoreVisibility {
+  STUDENTS_ONLY
+  PUBLIC
+}
+
+enum ModerationStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum PixKeyType {
+  CPF
+  CNPJ
+  EMAIL
+  PHONE
+  EVP // chave aleatória
+}
+
+enum StoreProductCategory {
+  APPAREL // kimono, faixa, camiseta
+  EQUIPMENT
+  MEMBERSHIP_FEE // mensalidade
+  EXAM_FEE // taxa de exame
+  EVENT_REGISTRATION // inscrição em campeonato
+  PRIVATE_LESSON
+  SEMINAR
+  OTHER
+}
+
+enum StoreOrderStatus {
+  AWAITING_PAYMENT
+  PAID
+  SEPARATED
+  DELIVERED
+  CANCELED
+}
+
+enum ReportStatus {
+  OPEN
+  DISMISSED
+  ACTION_TAKEN
+}
+
+enum ContentEntityType {
+  PROGRAM
+  BELT
+  CATEGORY
+  TECHNIQUE
+  GLOSSARY_TERM
+  QUIZ_QUESTION
+  ARTICLE
+}
+
+enum PushCampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  CANCELED
+}
+
+// =============================================================================
+// USUÁRIOS E AUTENTICAÇÃO
+// =============================================================================
+
+model User {
+  id                String    @id @default(uuid(7)) @db.Uuid
+  email             String?   @unique @db.Citext // Apple pode omitir em logins seguintes
+  emailVerifiedAt   DateTime?
+  passwordHash      String? // Argon2id
+  name              String
+  avatarMediaId     String?   @db.Uuid
+  birthDate         DateTime? @db.Date
+  cpf               String?   @unique @db.VarChar(11) // criptografado na aplicação? ver pendências
+  phone             String?
+  academyName       String?
+  teacherName       String? // texto livre do perfil (não é vínculo com turma)
+  guardianName      String?
+  guardianEmail     String?   @db.Citext
+  guardianConsentAt DateTime?
+  roles             Role[]    @default([USER])
+  currentBeltId     String?   @db.Uuid
+  programId         String?   @db.Uuid
+  locale            String    @default("pt-BR")
+  isBlocked         Boolean   @default(false)
+  blockedReason     String?
+  lastActiveAt      DateTime?
+  anonymizedAt      DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  avatar      Media?   @relation("UserAvatar", fields: [avatarMediaId], references: [id], onDelete: SetNull)
+  currentBelt Belt?    @relation("UserCurrentBelt", fields: [currentBeltId], references: [id], onDelete: SetNull)
+  program     Program? @relation("UserProgram", fields: [programId], references: [id], onDelete: SetNull)
+
+  authProviders       AuthProvider[]
+  refreshTokens       RefreshToken[]
+  verificationTokens  VerificationToken[]
+  ownedPrograms       Program[]                 @relation("ProgramOwner")
+  ownedMedia          Media[]                   @relation("MediaOwner")
+  quizAttempts        QuizAttempt[]
+  flashcardReviews    FlashcardReview[]
+  favorites           Favorite[]
+  lists               UserList[]
+  progressItems       ProgressItem[]            @relation("ProgressStudent")
+  approvedProgress    ProgressItem[]            @relation("ProgressApprover")
+  timelineEvents      TimelineEvent[]
+  taughtClasses       ClassGroup[]              @relation("ClassTeacher")
+  classMemberships    ClassMember[]
+  createdInvites      ClassInvite[]
+  announcements       Announcement[]
+  pushTokens          PushToken[]
+  videoSubmissions    VideoSubmission[]
+  entitlements        Entitlement[]             @relation("EntitlementUser")
+  grantedEntitlements Entitlement[]             @relation("EntitlementGrantedBy")
+  createdPlanPrices   PlanPrice[]
+  createdPromotions   Promotion[]
+  couponRedemptions   CouponRedemption[]
+  payments            Payment[]
+  subscriptions       Subscription[]
+  store               TeacherStore?
+  storeOrders         StoreOrder[]
+  orderStatusChanges  StoreOrderStatusHistory[]
+  storeReports        StoreReport[]             @relation("ReportReporter")
+  resolvedReports     StoreReport[]             @relation("ReportResolver")
+  auditLogs           AuditLog[]
+  contentVersions     ContentVersion[]
+  remoteConfigChanges RemoteConfig[]
+  pushCampaigns       PushCampaign[]
+
+  @@index([currentBeltId])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model AuthProvider {
+  id             String           @id @default(uuid(7)) @db.Uuid
+  userId         String           @db.Uuid
+  provider       AuthProviderType
+  providerUserId String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@unique([userId, provider])
+  @@map("auth_providers")
+}
+
+model RefreshToken {
+  id           String    @id @default(uuid(7)) @db.Uuid
+  userId       String    @db.Uuid
+  tokenHash    String    @unique // SHA-256 do token opaco
+  familyId     String    @db.Uuid // detecção de reuso na rotação: revoga a família toda
+  deviceName   String?
+  ip           String?
+  userAgent    String?
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  replacedById String?   @unique @db.Uuid
+  createdAt    DateTime  @default(now())
+
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replacedBy RefreshToken? @relation("TokenRotation", fields: [replacedById], references: [id], onDelete: SetNull)
+  replaces   RefreshToken? @relation("TokenRotation")
+
+  @@index([userId])
+  @@index([familyId])
+  @@map("refresh_tokens")
+}
+
+model VerificationToken {
+  id        String                @id @default(uuid(7)) @db.Uuid
+  userId    String                @db.Uuid
+  type      VerificationTokenType
+  tokenHash String                @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime              @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@map("verification_tokens")
+}
+
+// =============================================================================
+// CONTEÚDO BASE (CMS)
+// =============================================================================
+
+model Program {
+  id             String            @id @default(uuid(7)) @db.Uuid
+  name           String
+  federation     String? // ex.: CBJ, FPJudô
+  description    String?
+  isBase         Boolean           @default(false)
+  ownerTeacherId String?           @db.Uuid // programa personalizado de professor
+  clonedFromId   String?           @db.Uuid
+  status         PublicationStatus @default(DRAFT)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  deletedAt      DateTime?
+
+  ownerTeacher User?     @relation("ProgramOwner", fields: [ownerTeacherId], references: [id], onDelete: SetNull)
+  clonedFrom   Program?  @relation("ProgramClone", fields: [clonedFromId], references: [id], onDelete: SetNull)
+  clones       Program[] @relation("ProgramClone")
+
+  belts   Belt[]
+  users   User[]       @relation("UserProgram")
+  classes ClassGroup[]
+
+  @@index([ownerTeacherId])
+  @@index([isBase, status])
+  @@map("programs")
+}
+
+model Belt {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  programId   String    @db.Uuid
+  name        String // ex.: "Cinza-azul"
+  colors      String[] // hex; 2 cores = faixa bicolor
+  order       Int
+  minAge      Int?
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  requirements   BeltRequirement[]
+  users          User[]            @relation("UserCurrentBelt")
+  quizQuestions  QuizQuestion[]
+  quizAttempts   QuizAttempt[]
+  timelineEvents TimelineEvent[]
+  targetClasses  ClassGroup[]
+
+  @@unique([programId, order])
+  @@map("belts")
+}
+
+model Category {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  parentId  String?   @db.Uuid
+  slug      String    @unique
+  name      String
+  icon      String?
+  order     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children Category[] @relation("CategoryTree")
+
+  techniques    Technique[]
+  glossaryTerms GlossaryTerm[]
+  articles      Article[]
+
+  @@index([parentId, order])
+  @@map("categories")
+}
+
+model Technique {
+  id                   String            @id @default(uuid(7)) @db.Uuid
+  slug                 String            @unique
+  categoryId           String            @db.Uuid
+  japaneseName         String // ex.: "Ō-soto-gari"
+  japaneseScript       String? // ex.: "大外刈"
+  translation          String
+  pronunciationAudioId String?           @db.Uuid
+  richContent          Json? // documento Tiptap
+  keyPoints            String[]
+  commonMistakes       String[]
+  examinerCriteria     String?
+  status               PublicationStatus @default(DRAFT)
+  publishedAt          DateTime?
+  version              Int               @default(1)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  deletedAt            DateTime?
+
+  category           Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  pronunciationAudio Media?   @relation("TechniquePronunciation", fields: [pronunciationAudioId], references: [id], onDelete: SetNull)
+
+  media            TechniqueMedia[]
+  requirements     BeltRequirement[]
+  relatedTo        TechniqueRelation[] @relation("RelationFrom")
+  relatedFrom      TechniqueRelation[] @relation("RelationTo")
+  quizQuestions    QuizQuestion[]
+  flashcardReviews FlashcardReview[]
+  favorites        Favorite[]
+  listItems        UserListItem[]
+  progressItems    ProgressItem[]
+  lessonItems      ClassLessonItem[]
+  videoSubmissions VideoSubmission[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@map("techniques")
+}
+
+model TechniqueRelation {
+  techniqueId String @db.Uuid
+  relatedId   String @db.Uuid
+  order       Int    @default(0)
+
+  technique Technique @relation("RelationFrom", fields: [techniqueId], references: [id], onDelete: Cascade)
+  related   Technique @relation("RelationTo", fields: [relatedId], references: [id], onDelete: Cascade)
+
+  @@id([techniqueId, relatedId])
+  @@map("technique_relations")
+}
+
+model BeltRequirement {
+  id          String          @id @default(uuid(7)) @db.Uuid
+  beltId      String          @db.Uuid
+  techniqueId String          @db.Uuid
+  type        RequirementType @default(MANDATORY)
+  order       Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  belt      Belt      @relation(fields: [beltId], references: [id], onDelete: Cascade)
+  technique Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+
+  @@unique([beltId, techniqueId])
+  @@index([beltId, order])
+  @@map("belt_requirements")
+}
+
+model Media {
+  id               String          @id @default(uuid(7)) @db.Uuid
+  type             MediaType
+  ownerId          String?         @db.Uuid
+  visibility       MediaVisibility @default(PUBLIC)
+  status           MediaStatus     @default(PENDING_UPLOAD)
+  mimeType         String
+  originalKey      String          @unique
+  key720p          String?
+  keyOffline       String? // versão leve para download
+  keyThumb         String?
+  sizeBytes        BigInt?
+  offlineSizeBytes BigInt? // usado no gerenciador de downloads
+  durationMs       Int?
+  width            Int?
+  height           Int?
+  processingError  String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deletedAt        DateTime?
+
+  owner User? @relation("MediaOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  userAvatars             User[]               @relation("UserAvatar")
+  techniquePronunciations Technique[]          @relation("TechniquePronunciation")
+  techniqueMedia          TechniqueMedia[]
+  glossaryAudios          GlossaryTerm[]
+  articleCovers           Article[]
+  quizQuestions           QuizQuestion[]
+  quizOptions             QuizOption[]
+  timelineEventMedia      TimelineEventMedia[]
+  lessonItems             ClassLessonItem[]
+  videoSubmissions        VideoSubmission[]
+  storeLogos              TeacherStore[]
+  productImages           StoreProductImage[]
+  orderReceipts           StoreOrder[]
+
+  @@index([ownerId])
+  @@index([status])
+  @@map("media")
+}
+
+model TechniqueMedia {
+  id          String             @id @default(uuid(7)) @db.Uuid
+  techniqueId String             @db.Uuid
+  mediaId     String             @db.Uuid
+  role        TechniqueMediaRole
+  order       Int                @default(0)
+  caption     String?
+
+  technique Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  media     Media     @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  @@unique([techniqueId, mediaId])
+  @@index([techniqueId, role, order])
+  @@map("technique_media")
+}
+
+model GlossaryTerm {
+  id          String            @id @default(uuid(7)) @db.Uuid
+  japanese    String
+  kanji       String?
+  translation String
+  description String?
+  categoryId  String?           @db.Uuid
+  audioId     String?           @db.Uuid
+  status      PublicationStatus @default(DRAFT)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  deletedAt   DateTime?
+
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  audio    Media?    @relation(fields: [audioId], references: [id], onDelete: SetNull)
+
+  flashcardReviews FlashcardReview[]
+
+  @@index([categoryId])
+  @@map("glossary_terms")
+}
+
+/// Textos de história, etiqueta e regras.
+model Article {
+  id           String            @id @default(uuid(7)) @db.Uuid
+  categoryId   String            @db.Uuid
+  slug         String            @unique
+  title        String
+  richContent  Json
+  coverMediaId String?           @db.Uuid
+  order        Int               @default(0)
+  status       PublicationStatus @default(DRAFT)
+  publishedAt  DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  deletedAt    DateTime?
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  cover    Media?   @relation(fields: [coverMediaId], references: [id], onDelete: SetNull)
+
+  @@index([categoryId, order])
+  @@map("articles")
+}
+
+model ContentVersion {
+  id         String            @id @default(uuid(7)) @db.Uuid
+  entityType ContentEntityType
+  entityId   String            @db.Uuid
+  version    Int
+  status     PublicationStatus
+  snapshot   Json
+  comment    String?
+  authorId   String?           @db.Uuid
+  createdAt  DateTime          @default(now())
+
+  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@unique([entityType, entityId, version])
+  @@map("content_versions")
+}
+
+// =============================================================================
+// SIMULADO
+// =============================================================================
+
+model QuizQuestion {
+  id          String            @id @default(uuid(7)) @db.Uuid
+  type        QuizQuestionType
+  prompt      String
+  explanation String?
+  beltId      String?           @db.Uuid
+  techniqueId String?           @db.Uuid // técnica de referência (link no resultado)
+  mediaId     String?           @db.Uuid // vídeo/foto para "identifique a técnica"
+  difficulty  Int               @default(1)
+  status      PublicationStatus @default(DRAFT)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  deletedAt   DateTime?
+
+  belt      Belt?      @relation(fields: [beltId], references: [id], onDelete: SetNull)
+  technique Technique? @relation(fields: [techniqueId], references: [id], onDelete: SetNull)
+  media     Media?     @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+
+  options QuizOption[]
+  answers QuizAttemptAnswer[]
+
+  @@index([beltId, status])
+  @@index([techniqueId])
+  @@map("quiz_questions")
+}
+
+model QuizOption {
+  id         String  @id @default(uuid(7)) @db.Uuid
+  questionId String  @db.Uuid
+  text       String
+  mediaId    String? @db.Uuid
+  isCorrect  Boolean @default(false)
+  order      Int     @default(0)
+
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  media    Media?       @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+
+  answers QuizAttemptAnswer[]
+
+  @@index([questionId])
+  @@map("quiz_options")
+}
+
+model QuizAttempt {
+  id               String    @id @default(uuid(7)) @db.Uuid
+  userId           String    @db.Uuid
+  mode             QuizMode
+  beltId           String?   @db.Uuid
+  startedAt        DateTime
+  finishedAt       DateTime?
+  timeLimitSeconds Int?
+  score            Int       @default(0)
+  totalQuestions   Int
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  belt Belt? @relation(fields: [beltId], references: [id], onDelete: SetNull)
+
+  answers QuizAttemptAnswer[]
+
+  @@index([userId, createdAt])
+  @@map("quiz_attempts")
+}
+
+model QuizAttemptAnswer {
+  id               String  @id @default(uuid(7)) @db.Uuid
+  attemptId        String  @db.Uuid
+  questionId       String  @db.Uuid
+  selectedOptionId String? @db.Uuid
+  isCorrect        Boolean
+  timeSpentMs      Int?
+
+  attempt        QuizAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question       QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOption QuizOption?  @relation(fields: [selectedOptionId], references: [id], onDelete: SetNull)
+
+  @@unique([attemptId, questionId])
+  @@map("quiz_attempt_answers")
+}
+
+/// Estado do SM-2 por cartão. O cartão é uma técnica ou um termo do glossário.
+model FlashcardReview {
+  id             String        @id @default(uuid(7)) @db.Uuid
+  userId         String        @db.Uuid
+  kind           FlashcardKind
+  techniqueId    String?       @db.Uuid
+  glossaryTermId String?       @db.Uuid
+  easeFactor     Float         @default(2.5)
+  intervalDays   Int           @default(0)
+  repetitions    Int           @default(0)
+  lastQuality    Int?
+  dueAt          DateTime      @default(now())
+  lastReviewedAt DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  technique    Technique?    @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  glossaryTerm GlossaryTerm? @relation(fields: [glossaryTermId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, techniqueId])
+  @@unique([userId, glossaryTermId])
+  @@index([userId, dueAt])
+  @@index([userId, updatedAt])
+  @@map("flashcard_reviews")
+}
+
+// =============================================================================
+// DADOS DO USUÁRIO (sincronizáveis)
+// =============================================================================
+
+model Favorite {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  userId      String    @db.Uuid
+  techniqueId String    @db.Uuid
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  technique Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, techniqueId])
+  @@index([userId, updatedAt])
+  @@map("favorites")
+}
+
+model UserList {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  userId    String    @db.Uuid
+  name      String
+  color     String?
+  order     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items UserListItem[]
+
+  @@index([userId, updatedAt])
+  @@map("user_lists")
+}
+
+model UserListItem {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  listId      String    @db.Uuid
+  techniqueId String    @db.Uuid
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  list      UserList  @relation(fields: [listId], references: [id], onDelete: Cascade)
+  technique Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, techniqueId])
+  @@index([listId, updatedAt])
+  @@map("user_list_items")
+}
+
+/// O status do aluno (estudando/domina) e a aprovação do professor ficam em
+/// campos separados para que o last-write-wins do /sync do aluno nunca
+/// sobrescreva uma aprovação.
+model ProgressItem {
+  id                  String         @id @default(uuid(7)) @db.Uuid
+  userId              String         @db.Uuid
+  techniqueId         String         @db.Uuid
+  status              ProgressStatus @default(NOT_STARTED)
+  statusUpdatedAt     DateTime       @default(now()) // relógio do LWW do aluno
+  approvedAt          DateTime?
+  approvedByTeacherId String?        @db.Uuid
+  approvedInClassId   String?        @db.Uuid
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  deletedAt           DateTime?
+
+  user              User        @relation("ProgressStudent", fields: [userId], references: [id], onDelete: Cascade)
+  technique         Technique   @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  approvedByTeacher User?       @relation("ProgressApprover", fields: [approvedByTeacherId], references: [id], onDelete: SetNull)
+  approvedInClass   ClassGroup? @relation(fields: [approvedInClassId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, techniqueId])
+  @@index([userId, updatedAt])
+  @@map("progress_items")
+}
+
+model TimelineEvent {
+  id          String            @id @default(uuid(7)) @db.Uuid
+  userId      String            @db.Uuid
+  type        TimelineEventType
+  date        DateTime          @db.Date
+  beltId      String?           @db.Uuid
+  title       String
+  description String?
+  extra       Json? // competição: { name, result, medal }, academia: { from, to } etc.
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  deletedAt   DateTime?
+
+  user  User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  belt  Belt?                @relation(fields: [beltId], references: [id], onDelete: SetNull)
+  media TimelineEventMedia[]
+
+  @@index([userId, date])
+  @@index([userId, updatedAt])
+  @@map("timeline_events")
+}
+
+model TimelineEventMedia {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  eventId   String    @db.Uuid
+  mediaId   String    @db.Uuid
+  order     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  event TimelineEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  media Media         @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, mediaId])
+  @@map("timeline_event_media")
+}
+
+// =============================================================================
+// TURMAS (Pro)
+// =============================================================================
+
+/// "Class" colide com palavra reservada do JS no client gerado; a tabela é "classes".
+model ClassGroup {
+  id           String      @id @default(uuid(7)) @db.Uuid
+  teacherId    String      @db.Uuid
+  name         String
+  description  String?
+  programId    String      @db.Uuid // define o checklist da turma (pode ser programa clonado)
+  targetBeltId String?     @db.Uuid
+  inviteCode   String      @unique @db.VarChar(6)
+  examDate     DateTime?
+  status       ClassStatus @default(ACTIVE)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime?
+
+  teacher    User    @relation("ClassTeacher", fields: [teacherId], references: [id], onDelete: Restrict)
+  program    Program @relation(fields: [programId], references: [id], onDelete: Restrict)
+  targetBelt Belt?   @relation(fields: [targetBeltId], references: [id], onDelete: SetNull)
+
+  members          ClassMember[]
+  invites          ClassInvite[]
+  modules          ClassModule[]
+  announcements    Announcement[]
+  videoSubmissions VideoSubmission[]
+  approvals        ProgressItem[]
+
+  @@index([teacherId, status])
+  @@map("classes")
+}
+
+model ClassMember {
+  id                  String            @id @default(uuid(7)) @db.Uuid
+  classId             String            @db.Uuid
+  userId              String            @db.Uuid
+  status              ClassMemberStatus @default(ACTIVE)
+  joinedAt            DateTime          @default(now())
+  leftAt              DateTime?
+  videoShareConsentAt DateTime?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  classGroup ClassGroup @relation(fields: [classId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, userId])
+  @@index([userId, status])
+  @@map("class_members")
+}
+
+model ClassInvite {
+  id          String        @id @default(uuid(7)) @db.Uuid
+  classId     String        @db.Uuid
+  token       String        @unique // usado no link/QR (deep link)
+  channel     InviteChannel @default(LINK)
+  createdById String        @db.Uuid
+  maxUses     Int?
+  usesCount   Int           @default(0)
+  expiresAt   DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime      @default(now())
+
+  classGroup ClassGroup @relation(fields: [classId], references: [id], onDelete: Cascade)
+  createdBy  User       @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([classId])
+  @@map("class_invites")
+}
+
+model ClassModule {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  classId     String    @db.Uuid
+  title       String
+  description String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  classGroup ClassGroup    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  lessons    ClassLesson[]
+
+  @@index([classId, order])
+  @@map("class_modules")
+}
+
+model ClassLesson {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  moduleId    String    @db.Uuid
+  title       String
+  description String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  module ClassModule       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  items  ClassLessonItem[]
+
+  @@index([moduleId, order])
+  @@map("class_lessons")
+}
+
+model ClassLessonItem {
+  id          String         @id @default(uuid(7)) @db.Uuid
+  lessonId    String         @db.Uuid
+  type        LessonItemType
+  techniqueId String?        @db.Uuid // BASE_TECHNIQUE
+  title       String? // CUSTOM_CONTENT
+  richContent Json? // CUSTOM_CONTENT (Tiptap)
+  mediaId     String?        @db.Uuid // CUSTOM_CONTENT (vídeo/foto privada)
+  order       Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  deletedAt   DateTime?
+
+  lesson    ClassLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  technique Technique?  @relation(fields: [techniqueId], references: [id], onDelete: SetNull)
+  media     Media?      @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+
+  @@index([lessonId, order])
+  @@map("class_lesson_items")
+}
+
+model Announcement {
+  id         String    @id @default(uuid(7)) @db.Uuid
+  classId    String    @db.Uuid
+  authorId   String    @db.Uuid
+  title      String
+  body       String
+  pushSentAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  classGroup ClassGroup @relation(fields: [classId], references: [id], onDelete: Cascade)
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([classId, createdAt])
+  @@map("announcements")
+}
+
+/// Vídeo de comparação enviado pelo aluno ao professor (com consentimento).
+model VideoSubmission {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  classId         String    @db.Uuid
+  studentId       String    @db.Uuid
+  techniqueId     String    @db.Uuid
+  mediaId         String    @db.Uuid
+  consentAt       DateTime
+  teacherFeedback String?
+  reviewedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+
+  classGroup ClassGroup @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student    User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  technique  Technique  @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  media      Media      @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@index([classId, createdAt])
+  @@map("video_submissions")
+}
+
+// =============================================================================
+// PUSH
+// =============================================================================
+
+model PushToken {
+  id         String         @id @default(uuid(7)) @db.Uuid
+  userId     String?        @db.Uuid // visitante também recebe push segmentado por faixa
+  token      String         @unique // Expo push token
+  platform   DevicePlatform
+  deviceId   String?
+  lastSeenAt DateTime       @default(now())
+  revokedAt  DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_tokens")
+}
+
+model PushCampaign {
+  id          String             @id @default(uuid(7)) @db.Uuid
+  title       String
+  body        String
+  data        Json? // deep link
+  segment     Json // { all: true } | { beltIds: [] } | { roles: [] } | { entitlement: "pro" }
+  status      PushCampaignStatus @default(DRAFT)
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  stats       Json? // { targeted, sent, failed }
+  createdById String             @db.Uuid
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  createdBy User @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([status, scheduledAt])
+  @@map("push_campaigns")
+}
+
+// =============================================================================
+// MONETIZAÇÃO DA PLATAFORMA
+// =============================================================================
+
+model Entitlement {
+  id             String            @id @default(uuid(7)) @db.Uuid
+  userId         String            @db.Uuid
+  type           EntitlementType
+  source         EntitlementSource
+  paymentId      String?           @db.Uuid
+  subscriptionId String?           @db.Uuid
+  grantedById    String?           @db.Uuid
+  reason         String?
+  startsAt       DateTime          @default(now())
+  expiresAt      DateTime? // null = vitalício (Sem Anúncios)
+  revokedAt      DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  user         User          @relation("EntitlementUser", fields: [userId], references: [id], onDelete: Cascade)
+  grantedBy    User?         @relation("EntitlementGrantedBy", fields: [grantedById], references: [id], onDelete: SetNull)
+  payment      Payment?      @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  @@index([userId, type])
+  @@map("entitlements")
+}
+
+model Plan {
+  id           String           @id @default(uuid(7)) @db.Uuid
+  code         PlanCode         @unique
+  kind         PlanKind
+  interval     BillingInterval? // só para RECURRING
+  name         String
+  offerText    String?
+  salesEnabled Boolean          @default(true)
+  trialDays    Int              @default(0)
+  graceDays    Int              @default(0)
+  limits       Json? // { maxClasses, maxStudents, maxProducts } — 0 = ilimitado
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  prices        PlanPrice[]
+  promotions    Promotion[]
+  payments      Payment[]
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+/// Histórico de preços. Preço vigente = validFrom <= now AND (validUntil IS NULL OR validUntil > now).
+model PlanPrice {
+  id                       String                        @id @default(uuid(7)) @db.Uuid
+  planId                   String                        @db.Uuid
+  amountCents              Int
+  validFrom                DateTime
+  validUntil               DateTime?
+  existingSubscriberPolicy ExistingSubscriberPricePolicy @default(KEEP_LOCKED_PRICE)
+  createdByAdminId         String                        @db.Uuid
+  createdAt                DateTime                      @default(now())
+
+  plan           Plan      @relation(fields: [planId], references: [id], onDelete: Restrict)
+  createdByAdmin User      @relation(fields: [createdByAdminId], references: [id], onDelete: Restrict)
+  payments       Payment[]
+
+  @@index([planId, validFrom])
+  @@map("plan_prices")
+}
+
+model Promotion {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  planId      String    @db.Uuid
+  amountCents Int
+  startsAt    DateTime
+  endsAt      DateTime
+  bannerText  String?
+  isActive    Boolean   @default(false) // ligado/desligado pelo job
+  createdById String    @db.Uuid
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  plan      Plan      @relation(fields: [planId], references: [id], onDelete: Restrict)
+  createdBy User      @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  payments  Payment[]
+
+  @@index([planId, startsAt, endsAt])
+  @@map("promotions")
+}
+
+model Coupon {
+  id              String       @id @default(uuid(7)) @db.Uuid
+  code            String       @unique @db.Citext
+  discountType    DiscountType
+  percentOff      Int? // 1–100
+  amountOffCents  Int?
+  planCodes       PlanCode[] // vazio = todos os planos
+  maxRedemptions  Int?
+  maxPerUser      Int          @default(1)
+  redemptionCount Int          @default(0)
+  validFrom       DateTime?
+  validUntil      DateTime?
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime?
+
+  redemptions CouponRedemption[]
+  payments    Payment[]
+
+  @@map("coupons")
+}
+
+model CouponRedemption {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  couponId  String   @db.Uuid
+  userId    String   @db.Uuid
+  paymentId String   @unique @db.Uuid // só conta quando o pagamento é confirmado
+  createdAt DateTime @default(now())
+
+  coupon  Coupon  @relation(fields: [couponId], references: [id], onDelete: Restrict)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([couponId, userId])
+  @@map("coupon_redemptions")
+}
+
+model PaymentGatewayConfig {
+  id                     String              @id @default(uuid(7)) @db.Uuid
+  provider               PaymentProviderCode @unique
+  environment            GatewayEnvironment  @default(SANDBOX)
+  credentialsEncrypted   String // AES-256-GCM com chave do ambiente (nunca em texto puro)
+  webhookSecretEncrypted String?
+  pixExpirationMinutes   Int                 @default(30)
+  isActive               Boolean             @default(false) // só um ativo por vez
+  lastWebhookAt          DateTime?
+  lastWebhookError       String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+
+  @@map("payment_gateway_configs")
+}
+
+model Payment {
+  id                  String              @id @default(uuid(7)) @db.Uuid
+  userId              String              @db.Uuid
+  planId              String              @db.Uuid
+  planPriceId         String?             @db.Uuid
+  promotionId         String?             @db.Uuid
+  couponId            String?             @db.Uuid
+  subscriptionId      String?             @db.Uuid
+  provider            PaymentProviderCode
+  originalAmountCents Int
+  discountCents       Int                 @default(0)
+  amountCents         Int
+  gatewayChargeId     String?
+  qrCodeBase64        String? // imagem devolvida pelo gateway (opcional)
+  copiaECola          String?
+  status              PaymentStatus       @default(PENDING)
+  expiresAt           DateTime?
+  paidAt              DateTime?
+  refundedAt          DateTime?
+  receiptNumber       String?             @unique
+  rawWebhook          Json?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  user         User              @relation(fields: [userId], references: [id], onDelete: Restrict)
+  plan         Plan              @relation(fields: [planId], references: [id], onDelete: Restrict)
+  planPrice    PlanPrice?        @relation(fields: [planPriceId], references: [id], onDelete: SetNull)
+  promotion    Promotion?        @relation(fields: [promotionId], references: [id], onDelete: SetNull)
+  coupon       Coupon?           @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  subscription Subscription?     @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  redemption   CouponRedemption?
+  entitlements Entitlement[]
+
+  @@unique([provider, gatewayChargeId])
+  @@index([userId, createdAt])
+  @@index([status, expiresAt])
+  @@index([paidAt])
+  @@map("payments")
+}
+
+model Subscription {
+  id                    String              @id @default(uuid(7)) @db.Uuid
+  userId                String              @db.Uuid
+  planId                String              @db.Uuid
+  provider              PaymentProviderCode
+  status                SubscriptionStatus
+  gatewaySubscriptionId String?
+  lockedPriceCents      Int
+  nextPriceCents        Int? // preenchido quando a política é APPLY_ON_NEXT_RENEWAL
+  currentPeriodStart    DateTime
+  currentPeriodEnd      DateTime
+  trialEndsAt           DateTime?
+  graceEndsAt           DateTime?
+  cancelAtPeriodEnd     Boolean             @default(false)
+  canceledAt            DateTime?
+  suspendedAt           DateTime?
+  renewalReminderSentAt DateTime?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  plan         Plan          @relation(fields: [planId], references: [id], onDelete: Restrict)
+  payments     Payment[]
+  entitlements Entitlement[]
+
+  @@unique([provider, gatewaySubscriptionId])
+  @@index([userId, status])
+  @@index([status, currentPeriodEnd])
+  @@map("subscriptions")
+}
+
+model WebhookEvent {
+  id              String              @id @default(uuid(7)) @db.Uuid
+  provider        PaymentProviderCode
+  externalEventId String
+  type            String
+  payload         Json
+  signatureValid  Boolean
+  receivedAt      DateTime            @default(now())
+  processedAt     DateTime?
+  attempts        Int                 @default(0)
+  error           String?
+
+  @@unique([provider, externalEventId])
+  @@index([processedAt])
+  @@map("webhook_events")
+}
+
+// =============================================================================
+// LOJINHA DO PROFESSOR (a plataforma não intermedia valores)
+// =============================================================================
+
+model TeacherStore {
+  id               String           @id @default(uuid(7)) @db.Uuid
+  teacherId        String           @unique @db.Uuid
+  name             String
+  slug             String           @unique @db.Citext
+  description      String?
+  logoMediaId      String?          @db.Uuid
+  visibility       StoreVisibility  @default(STUDENTS_ONLY)
+  pixKeyType       PixKeyType
+  pixKey           String
+  receiverName     String           @db.VarChar(25) // limite do BR Code (tag 59)
+  receiverCity     String           @db.VarChar(15) // limite do BR Code (tag 60)
+  whatsapp         String?
+  isActive         Boolean          @default(true)
+  moderationStatus ModerationStatus @default(ACTIVE)
+  moderationReason String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+
+  teacher User   @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  logo    Media? @relation(fields: [logoMediaId], references: [id], onDelete: SetNull)
+
+  products StoreProduct[]
+  orders   StoreOrder[]
+  reports  StoreReport[]
+
+  @@map("teacher_stores")
+}
+
+model StoreProduct {
+  id               String               @id @default(uuid(7)) @db.Uuid
+  storeId          String               @db.Uuid
+  name             String
+  description      String?
+  category         StoreProductCategory
+  priceCents       Int
+  isActive         Boolean              @default(true)
+  moderationStatus ModerationStatus     @default(ACTIVE)
+  moderationReason String?
+  order            Int                  @default(0)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  deletedAt        DateTime?
+
+  store      TeacherStore          @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  images     StoreProductImage[]
+  variants   StoreProductVariant[]
+  orderItems StoreOrderItem[]
+  reports    StoreReport[]
+
+  @@index([storeId, isActive])
+  @@map("store_products")
+}
+
+model StoreProductImage {
+  id        String @id @default(uuid(7)) @db.Uuid
+  productId String @db.Uuid
+  mediaId   String @db.Uuid
+  order     Int    @default(0)
+
+  product StoreProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  media   Media        @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, mediaId])
+  @@map("store_product_images")
+}
+
+model StoreProductVariant {
+  id         String    @id @default(uuid(7)) @db.Uuid
+  productId  String    @db.Uuid
+  size       String? // A0–A5, M0–M4, P/M/G…
+  color      String?
+  sku        String?
+  priceCents Int? // null = usa o preço do produto
+  stock      Int? // null = sem controle de estoque
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  product    StoreProduct     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems StoreOrderItem[]
+
+  @@unique([productId, size, color])
+  @@map("store_product_variants")
+}
+
+model StoreOrder {
+  id              String           @id @default(uuid(7)) @db.Uuid
+  number          Int              @unique @default(autoincrement()) // nº legível p/ WhatsApp
+  storeId         String           @db.Uuid
+  buyerUserId     String           @db.Uuid
+  status          StoreOrderStatus @default(AWAITING_PAYMENT)
+  totalCents      Int
+  brCodePayload   String // payload EMV estático gerado no servidor
+  txid            String           @db.VarChar(25) // tag 62/05 do BR Code
+  pixKeySnapshot  String // chave usada no momento do pedido
+  receiptMediaId  String?          @db.Uuid
+  buyerNotes      String?
+  sellerNotes     String?
+  paidConfirmedAt DateTime?
+  separatedAt     DateTime?
+  deliveredAt     DateTime?
+  canceledAt      DateTime?
+  cancelReason    String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  store         TeacherStore              @relation(fields: [storeId], references: [id], onDelete: Restrict)
+  buyer         User                      @relation(fields: [buyerUserId], references: [id], onDelete: Restrict)
+  receiptMedia  Media?                    @relation(fields: [receiptMediaId], references: [id], onDelete: SetNull)
+  items         StoreOrderItem[]
+  statusHistory StoreOrderStatusHistory[]
+
+  @@index([storeId, status, createdAt])
+  @@index([buyerUserId, createdAt])
+  @@map("store_orders")
+}
+
+model StoreOrderItem {
+  id             String  @id @default(uuid(7)) @db.Uuid
+  orderId        String  @db.Uuid
+  productId      String  @db.Uuid
+  variantId      String? @db.Uuid
+  productName    String // snapshot
+  variantLabel   String? // snapshot ("A2 / Branco")
+  unitPriceCents Int
+  quantity       Int
+  totalCents     Int
+
+  order   StoreOrder           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product StoreProduct         @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variant StoreProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@map("store_order_items")
+}
+
+model StoreOrderStatusHistory {
+  id          String            @id @default(uuid(7)) @db.Uuid
+  orderId     String            @db.Uuid
+  fromStatus  StoreOrderStatus?
+  toStatus    StoreOrderStatus
+  changedById String            @db.Uuid
+  note        String?
+  createdAt   DateTime          @default(now())
+
+  order     StoreOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  changedBy User       @relation(fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([orderId, createdAt])
+  @@map("store_order_status_history")
+}
+
+model StoreReport {
+  id           String       @id @default(uuid(7)) @db.Uuid
+  storeId      String       @db.Uuid
+  productId    String?      @db.Uuid
+  reporterId   String       @db.Uuid
+  reason       String
+  status       ReportStatus @default(OPEN)
+  resolvedById String?      @db.Uuid
+  resolvedAt   DateTime?
+  resolution   String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  store      TeacherStore  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product    StoreProduct? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  reporter   User          @relation("ReportReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  resolvedBy User?         @relation("ReportResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@map("store_reports")
+}
+
+// =============================================================================
+// CONFIGURAÇÃO, AUDITORIA E MÉTRICAS
+// =============================================================================
+
+/// Versionado: cada alteração cria uma linha nova; a atual tem isCurrent = true.
+/// O ETag do GET /config é derivado da maior versão vigente.
+model RemoteConfig {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  key         String // ex.: "ads", "payments", "features", "entitlements"
+  value       Json
+  version     Int
+  isCurrent   Boolean  @default(true)
+  updatedById String?  @db.Uuid
+  createdAt   DateTime @default(now())
+
+  updatedBy User? @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@unique([key, version])
+  @@index([key, isCurrent])
+  @@map("remote_config")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  actorId    String?  @db.Uuid
+  action     String // ex.: "plan_price.create", "user.grant_entitlement"
+  entityType String
+  entityId   String?
+  before     Json?
+  after      Json?
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+/// Eventos brutos para DAU/MAU, técnicas mais vistas e downloads.
+/// Sem FK de propósito (alto volume); particionar por mês em produção.
+model AnalyticsEvent {
+  id          String          @id @default(uuid(7)) @db.Uuid
+  userId      String?         @db.Uuid
+  anonymousId String?
+  type        String // "app_open", "technique_view", "belt_download", ...
+  entityId    String?         @db.Uuid
+  platform    DevicePlatform?
+  props       Json?
+  createdAt   DateTime        @default(now())
+
+  @@index([type, createdAt])
+  @@index([entityId, type])
+  @@index([userId, createdAt])
+  @@map("analytics_events")
+}
+

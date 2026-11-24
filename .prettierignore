@@ -1,0 +1,10 @@
+pnpm-lock.yaml
+dist
+coverage
+apps/api/src/generated
+apps/api/prisma/migrations
+packages/shared/src/api/schema.d.ts
+packages/shared/openapi.json
+
+# Referências do layout (marcação original, não é código)
+docs/design/telas

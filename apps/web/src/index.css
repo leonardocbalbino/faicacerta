@@ -1,0 +1,147 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/bricolage-grotesque';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Tema do layout aprovado (docs/design): lima + preto, cartões grafite e
+ * Bricolage Grotesque nos títulos. O escuro é o padrão, como no app; o claro
+ * inverte a lógica do logo sobre fundo claro (preto com detalhe lima).
+ * As cores das faixas só aparecem no conteúdo.
+ */
+:root {
+  --radius: 0.875rem;
+  --brand: #d4ff3a;
+  --brand-foreground: #0b0b0f;
+  --background: #f5f5f7;
+  --foreground: #0b0b0f;
+  --card: #ffffff;
+  --card-foreground: #0b0b0f;
+  --popover: #ffffff;
+  --popover-foreground: #0b0b0f;
+  --primary: #0b0b0f;
+  --primary-foreground: #d4ff3a;
+  --secondary: #e9e9ee;
+  --secondary-foreground: #0b0b0f;
+  --muted: #ececf1;
+  --muted-foreground: #5a5a66;
+  --accent: #e4e4ea;
+  --accent-foreground: #0b0b0f;
+  --destructive: #d6204f;
+  --destructive-foreground: #ffffff;
+  --success: #0e8f67;
+  --warning: #b45309;
+  --border: #dcdce3;
+  --input: #d4d4dc;
+  --ring: #0b0b0f;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0b0b0f;
+  --sidebar-accent: #ececf1;
+  --sidebar-border: #e4e4ea;
+}
+
+.dark {
+  --background: #0b0b0f;
+  --foreground: #f5f5f7;
+  --card: #16161d;
+  --card-foreground: #f5f5f7;
+  --popover: #1f1f29;
+  --popover-foreground: #f5f5f7;
+  --primary: #d4ff3a;
+  --primary-foreground: #0b0b0f;
+  --secondary: #1f1f29;
+  --secondary-foreground: #f5f5f7;
+  --muted: #1f1f29;
+  --muted-foreground: #a1a1aa;
+  --accent: #23232d;
+  --accent-foreground: #f5f5f7;
+  --destructive: #ff5c8a;
+  --destructive-foreground: #0b0b0f;
+  --success: #2ee6a8;
+  --warning: #fb923c;
+  --border: #26262f;
+  --input: #3a3a46;
+  --ring: #d4ff3a;
+  --sidebar: #111117;
+  --sidebar-foreground: #f5f5f7;
+  --sidebar-accent: #1f1f29;
+  --sidebar-border: #26262f;
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', Inter, system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', Inter, sans-serif;
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-border: var(--sidebar-border);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  h1,
+  h2 {
+    @apply font-display tracking-tight;
+  }
+}
+
+/* Conteúdo do editor Tiptap */
+.rich-text {
+  @apply space-y-3 leading-relaxed;
+}
+.rich-text h2 {
+  @apply text-lg font-bold;
+}
+.rich-text h3 {
+  @apply text-base font-semibold;
+}
+.rich-text ul {
+  @apply list-disc pl-6;
+}
+.rich-text ol {
+  @apply list-decimal pl-6;
+}
+.rich-text blockquote {
+  @apply border-l-4 border-brand pl-4 italic text-muted-foreground;
+}
+.rich-text:focus {
+  outline: none;
+}
+.rich-text p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  @apply pointer-events-none float-left h-0 text-muted-foreground;
+}

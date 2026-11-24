@@ -1,0 +1,68 @@
+name: faixa-certa
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: faixacerta
+      POSTGRES_PASSWORD: faixacerta
+      POSTGRES_DB: faixacerta
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U faixacerta -d faixacerta']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ['redis-server', '--appendonly', 'yes']
+    ports:
+      - '6379:6379'
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Storage compatível com S3. A MinIO deixou de publicar a imagem comunitária
+  # (minio/minio não existe mais no Docker Hub); o RustFS é Apache 2.0.
+  # Os buckets e a policy de leitura pública são criados pela API ao subir
+  # (S3_AUTO_CREATE_BUCKETS, ligado fora de produção).
+  rustfs:
+    image: rustfs/rustfs:1.0.6
+    command: ['/data']
+    environment:
+      RUSTFS_ACCESS_KEY: faixacerta-dev
+      RUSTFS_SECRET_KEY: faixacerta-dev-secret-2026
+      RUSTFS_ADDRESS: ':9000'
+      RUSTFS_CONSOLE_ENABLE: 'true'
+      RUSTFS_CONSOLE_ADDRESS: ':9001'
+    ports:
+      - '9000:9000' # API S3
+      - '9001:9001' # console web
+    volumes:
+      # Volume nomeado: dispensa ajustar permissão (o container roda como UID 10001).
+      - rustfsdata:/data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - '1025:1025' # SMTP
+      - '8025:8025' # UI web
+    healthcheck:
+      test: ['CMD', '/mailpit', 'readyz']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata:
+  redisdata:
+  rustfsdata:

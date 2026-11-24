@@ -1,0 +1,9 @@
+{
+  "extends": "@faixa-certa/tsconfig/nestjs.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "types": ["vitest/globals", "node"]
+  },
+  "include": ["src", "test", "prisma", "prisma.config.ts", "vitest.config*.ts"]
+}

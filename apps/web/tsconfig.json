@@ -1,0 +1,16 @@
+{
+  "extends": "@faixa-certa/tsconfig/base.json",
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "declaration": false,
+    "allowImportingTsExtensions": false,
+    "types": ["vite/client", "node"],
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["src", "vite.config.ts"]
+}

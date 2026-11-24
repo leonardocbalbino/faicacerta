@@ -1,0 +1,30 @@
+{
+  "name": "faixa-certa",
+  "private": true,
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e --concurrency=1",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "infra:up": "docker compose -f docker/docker-compose.yml up -d --wait",
+    "infra:down": "docker compose -f docker/docker-compose.yml down",
+    "db:migrate": "pnpm --filter @faixa-certa/api db:migrate",
+    "db:seed": "pnpm --filter @faixa-certa/api db:seed",
+    "db:reset": "pnpm --filter @faixa-certa/api db:reset",
+    "api:openapi": "pnpm --filter @faixa-certa/api openapi:generate"
+  },
+  "devDependencies": {
+    "oxlint": "^1.95.0",
+    "prettier": "^3.10.1",
+    "turbo": "^2.11.13",
+    "typescript": "~6.0.3"
+  }
+}
