@@ -26,6 +26,8 @@ export const router = createBrowserRouter([
     path: '/redefinir-senha',
     ...page(() => import('@/pages/auth/password-pages'), 'ResetPasswordPage'),
   },
+  // Compra do Sem Anúncios por Pix (pública; login próprio).
+  { path: '/sem-anuncios', ...page(() => import('@/pages/buy/buy-page'), 'BuyPage') },
   {
     element: (
       <RequireStaff>
@@ -71,6 +73,10 @@ export const router = createBrowserRouter([
       {
         path: '/textos/:id',
         ...page(() => import('@/pages/articles/article-edit-page'), 'ArticleEditPage'),
+      },
+      {
+        path: '/monetizacao',
+        ...page(() => import('@/pages/monetization/monetization-page'), 'MonetizationPage'),
       },
       {
         path: '/midia',

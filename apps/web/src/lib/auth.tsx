@@ -16,8 +16,11 @@ interface AuthContextValue {
   status: Status;
   user: Me | null;
   isStaff: boolean;
+  isAdmin: boolean;
   login(email: string, password: string): Promise<Me>;
   logout(): Promise<void>;
+  /** Recarrega os dados do usuário (ex.: depois de uma compra). */
+  refresh(): Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -56,15 +59,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session.clear();
   }, []);
 
+  const refresh = useCallback(async () => {
+    const me = unwrap<Me>(await api.GET('/v1/me'));
+    setUser(me);
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       status,
       user,
       isStaff: !!user?.roles.some((r) => r === Role.ADMIN || r === Role.CONTENT_EDITOR),
+      isAdmin: !!user?.roles.includes(Role.ADMIN),
       login,
       logout,
+      refresh,
     }),
-    [status, user, login, logout],
+    [status, user, login, logout, refresh],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

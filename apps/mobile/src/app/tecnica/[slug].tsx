@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RichText } from '@/components/rich-text';
 import { categoryPath, TechniqueRow } from '@/components/technique-row';
 import { IconButton, PrimaryButton, SecondaryButton, StateView, Text } from '@/components/ui';
+import { useAds } from '@/lib/ads';
 import { useTechnique } from '@/lib/api';
 import { usePronunciation } from '@/lib/audio';
 import { formatDuration } from '@/lib/journey';
@@ -22,11 +23,16 @@ export default function Tecnica() {
   const insets = useSafeAreaInsets();
   const technique = useTechnique(slug);
   const { markSeen } = usePrefs();
+  const { trackContentView } = useAds();
   const id = technique.data?.id;
 
   useEffect(() => {
-    if (id) markSeen(id);
-  }, [id, markSeen]);
+    if (!id) return;
+    markSeen(id);
+    trackContentView();
+    // Conta uma vez por técnica aberta.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   if (!technique.data) {
     return (

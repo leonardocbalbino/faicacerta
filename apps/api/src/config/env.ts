@@ -77,6 +77,18 @@ export const envSchema = z.object({
     message: 'DATA_ENCRYPTION_KEY precisa ter 32 bytes em base64',
   }),
 
+  // --- Cobrança -------------------------------------------------------------
+  /** Fallback do gateway Pix quando não há configuração ativa salva no painel. */
+  ASAAS_API_KEY: z.string().optional(),
+  ASAAS_ENVIRONMENT: z.enum(['sandbox', 'production']).default('sandbox'),
+  ASAAS_WEBHOOK_TOKEN: z.string().optional(),
+  /** Bundle ID do app iOS e o Apple ID numérico (verificação das compras na App Store). */
+  APPLE_BUNDLE_ID: z.string().default('faixacerta'),
+  APPLE_APP_ID: z.coerce.number().int().optional(),
+  /** Pacote do app Android e a conta de serviço do Google Play (JSON em base64). */
+  ANDROID_PACKAGE: z.string().default('br.com.faixacerta.app'),
+  GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: z.string().optional(),
+
   SENTRY_DSN: z.string().optional(),
   /** Desliga o rate limit (usado nos testes E2E). */
   THROTTLE_DISABLED: bool,

@@ -23,6 +23,7 @@
     "dev:worker": "nest start --watch --entryFile worker"
   },
   "dependencies": {
+    "@apple/app-store-server-library": "3.1.0",
     "@aws-sdk/client-s3": "^3.1176.0",
     "@aws-sdk/s3-request-presigner": "^3.1176.0",
     "@faixa-certa/shared": "workspace:*",

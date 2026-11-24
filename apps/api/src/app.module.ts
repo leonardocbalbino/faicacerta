@@ -17,6 +17,7 @@ import { PrismaModule } from './infra/prisma/prisma.module.js';
 import { QueueModule } from './infra/queue/queue.module.js';
 import { StorageModule } from './infra/storage/storage.module.js';
 import { AuditModule } from './modules/audit/audit.module.js';
+import { BillingModule } from './modules/billing/billing.module.js';
 import { CatalogModule } from './modules/catalog/catalog.module.js';
 import { CmsModule } from './modules/cms/cms.module.js';
 import { MediaModule } from './modules/media/media.module.js';
@@ -96,6 +97,7 @@ import { UsersModule } from './modules/users/users.module.js';
     MediaModule,
     CmsModule,
     CatalogModule,
+    BillingModule,
     // Workers do BullMQ só sobem com fila real e WORKERS_ENABLED (padrão: ligado).
     ConditionalModule.registerWhen(
       WorkersModule,

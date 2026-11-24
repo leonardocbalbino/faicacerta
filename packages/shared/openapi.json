@@ -67,6 +67,16 @@
                       "nullable": true,
                       "type": "string"
                     },
+                    "entitlements": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "NO_ADS",
+                          "PRO"
+                        ]
+                      }
+                    },
                     "hasPassword": {
                       "type": "boolean"
                     },
@@ -97,6 +107,7 @@
                     "currentBeltId",
                     "programId",
                     "academyName",
+                    "entitlements",
                     "hasPassword",
                     "providers",
                     "createdAt"
@@ -220,6 +231,16 @@
                       "nullable": true,
                       "type": "string"
                     },
+                    "entitlements": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "NO_ADS",
+                          "PRO"
+                        ]
+                      }
+                    },
                     "hasPassword": {
                       "type": "boolean"
                     },
@@ -250,6 +271,7 @@
                     "currentBeltId",
                     "programId",
                     "academyName",
+                    "entitlements",
                     "hasPassword",
                     "providers",
                     "createdAt"
@@ -1321,6 +1343,16 @@
                           "nullable": true,
                           "type": "string"
                         },
+                        "entitlements": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "NO_ADS",
+                              "PRO"
+                            ]
+                          }
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -1351,6 +1383,7 @@
                         "currentBeltId",
                         "programId",
                         "academyName",
+                        "entitlements",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -1488,6 +1521,16 @@
                           "nullable": true,
                           "type": "string"
                         },
+                        "entitlements": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "NO_ADS",
+                              "PRO"
+                            ]
+                          }
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -1518,6 +1561,7 @@
                         "currentBeltId",
                         "programId",
                         "academyName",
+                        "entitlements",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -1646,6 +1690,16 @@
                           "nullable": true,
                           "type": "string"
                         },
+                        "entitlements": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "NO_ADS",
+                              "PRO"
+                            ]
+                          }
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -1676,6 +1730,7 @@
                         "currentBeltId",
                         "programId",
                         "academyName",
+                        "entitlements",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -1841,6 +1896,16 @@
                           "nullable": true,
                           "type": "string"
                         },
+                        "entitlements": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "NO_ADS",
+                              "PRO"
+                            ]
+                          }
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -1871,6 +1936,7 @@
                         "currentBeltId",
                         "programId",
                         "academyName",
+                        "entitlements",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -2011,6 +2077,16 @@
                           "nullable": true,
                           "type": "string"
                         },
+                        "entitlements": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "NO_ADS",
+                              "PRO"
+                            ]
+                          }
+                        },
                         "hasPassword": {
                           "type": "boolean"
                         },
@@ -2041,6 +2117,7 @@
                         "currentBeltId",
                         "programId",
                         "academyName",
+                        "entitlements",
                         "hasPassword",
                         "providers",
                         "createdAt"
@@ -16156,6 +16233,1366 @@
         },
         "tags": [
           "Catálogo"
+        ]
+      }
+    },
+    "/v1/config": {
+      "get": {
+        "operationId": "Billing_config",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ads": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "units": {
+                          "type": "object",
+                          "properties": {
+                            "ios": {
+                              "type": "object",
+                              "properties": {
+                                "banner": {
+                                  "type": "string",
+                                  "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                                },
+                                "interstitial": {
+                                  "type": "string",
+                                  "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                                }
+                              },
+                              "required": [
+                                "banner",
+                                "interstitial"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "android": {
+                              "type": "object",
+                              "properties": {
+                                "banner": {
+                                  "type": "string",
+                                  "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                                },
+                                "interstitial": {
+                                  "type": "string",
+                                  "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                                }
+                              },
+                              "required": [
+                                "banner",
+                                "interstitial"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "ios",
+                            "android"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "interstitialEveryNScreens": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 50
+                        },
+                        "interstitialMinIntervalSeconds": {
+                          "type": "integer",
+                          "minimum": 30,
+                          "maximum": 3600
+                        }
+                      },
+                      "required": [
+                        "enabled",
+                        "units",
+                        "interstitialEveryNScreens",
+                        "interstitialMinIntervalSeconds"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "noAds": {
+                      "type": "object",
+                      "properties": {
+                        "salesEnabled": {
+                          "type": "boolean"
+                        },
+                        "priceCents": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "storeProductId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "salesEnabled",
+                        "priceCents",
+                        "storeProductId"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "ads",
+                    "noAds"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Cobrança"
+        ]
+      }
+    },
+    "/v1/billing/entitlements": {
+      "get": {
+        "operationId": "Billing_entitlements",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entitlements": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "NO_ADS",
+                          "PRO"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "entitlements"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cobrança"
+        ]
+      }
+    },
+    "/v1/billing/store": {
+      "post": {
+        "operationId": "Billing_store",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "platform": {
+                        "type": "string",
+                        "enum": [
+                          "ios"
+                        ]
+                      },
+                      "signedTransaction": {
+                        "type": "string",
+                        "minLength": 100,
+                        "maxLength": 20000
+                      }
+                    },
+                    "required": [
+                      "platform",
+                      "signedTransaction"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "platform": {
+                        "type": "string",
+                        "enum": [
+                          "android"
+                        ]
+                      },
+                      "productId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 150
+                      },
+                      "purchaseToken": {
+                        "type": "string",
+                        "minLength": 10,
+                        "maxLength": 1000
+                      }
+                    },
+                    "required": [
+                      "platform",
+                      "productId",
+                      "purchaseToken"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entitlements": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "NO_ADS",
+                          "PRO"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "entitlements"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cobrança"
+        ]
+      }
+    },
+    "/v1/billing/pix": {
+      "post": {
+        "operationId": "Billing_pix",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cpf": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "cpf"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "paymentId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "PENDING",
+                        "PAID",
+                        "EXPIRED",
+                        "CANCELED",
+                        "REFUNDED",
+                        "FAILED"
+                      ]
+                    },
+                    "amountCents": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "copiaECola": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "qrCodeBase64": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "paymentId",
+                    "status",
+                    "amountCents",
+                    "copiaECola",
+                    "qrCodeBase64",
+                    "expiresAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cobrança"
+        ]
+      }
+    },
+    "/v1/billing/payments/{id}": {
+      "get": {
+        "operationId": "Billing_payment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "paymentId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "PENDING",
+                        "PAID",
+                        "EXPIRED",
+                        "CANCELED",
+                        "REFUNDED",
+                        "FAILED"
+                      ]
+                    },
+                    "amountCents": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "copiaECola": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "qrCodeBase64": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "paymentId",
+                    "status",
+                    "amountCents",
+                    "copiaECola",
+                    "qrCodeBase64",
+                    "expiresAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Cobrança"
+        ]
+      }
+    },
+    "/v1/admin/monetization/ads": {
+      "get": {
+        "operationId": "AdminMonetization_ads",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "units": {
+                      "type": "object",
+                      "properties": {
+                        "ios": {
+                          "type": "object",
+                          "properties": {
+                            "banner": {
+                              "type": "string",
+                              "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                            },
+                            "interstitial": {
+                              "type": "string",
+                              "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                            }
+                          },
+                          "required": [
+                            "banner",
+                            "interstitial"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "android": {
+                          "type": "object",
+                          "properties": {
+                            "banner": {
+                              "type": "string",
+                              "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                            },
+                            "interstitial": {
+                              "type": "string",
+                              "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                            }
+                          },
+                          "required": [
+                            "banner",
+                            "interstitial"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "ios",
+                        "android"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "interstitialEveryNScreens": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 50
+                    },
+                    "interstitialMinIntervalSeconds": {
+                      "type": "integer",
+                      "minimum": 30,
+                      "maximum": 3600
+                    }
+                  },
+                  "required": [
+                    "enabled",
+                    "units",
+                    "interstitialEveryNScreens",
+                    "interstitialMinIntervalSeconds"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
+        ]
+      },
+      "put": {
+        "operationId": "AdminMonetization_setAds",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "units": {
+                    "type": "object",
+                    "properties": {
+                      "ios": {
+                        "type": "object",
+                        "properties": {
+                          "banner": {
+                            "type": "string",
+                            "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                          },
+                          "interstitial": {
+                            "type": "string",
+                            "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                          }
+                        },
+                        "required": [
+                          "banner",
+                          "interstitial"
+                        ]
+                      },
+                      "android": {
+                        "type": "object",
+                        "properties": {
+                          "banner": {
+                            "type": "string",
+                            "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                          },
+                          "interstitial": {
+                            "type": "string",
+                            "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                          }
+                        },
+                        "required": [
+                          "banner",
+                          "interstitial"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "ios",
+                      "android"
+                    ]
+                  },
+                  "interstitialEveryNScreens": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 50
+                  },
+                  "interstitialMinIntervalSeconds": {
+                    "type": "integer",
+                    "minimum": 30,
+                    "maximum": 3600
+                  }
+                },
+                "required": [
+                  "enabled",
+                  "units",
+                  "interstitialEveryNScreens",
+                  "interstitialMinIntervalSeconds"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "units": {
+                      "type": "object",
+                      "properties": {
+                        "ios": {
+                          "type": "object",
+                          "properties": {
+                            "banner": {
+                              "type": "string",
+                              "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                            },
+                            "interstitial": {
+                              "type": "string",
+                              "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                            }
+                          },
+                          "required": [
+                            "banner",
+                            "interstitial"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "android": {
+                          "type": "object",
+                          "properties": {
+                            "banner": {
+                              "type": "string",
+                              "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                            },
+                            "interstitial": {
+                              "type": "string",
+                              "pattern": "^ca-app-pub-\\d{16}\\/\\d{10}$"
+                            }
+                          },
+                          "required": [
+                            "banner",
+                            "interstitial"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "ios",
+                        "android"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "interstitialEveryNScreens": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 50
+                    },
+                    "interstitialMinIntervalSeconds": {
+                      "type": "integer",
+                      "minimum": 30,
+                      "maximum": 3600
+                    }
+                  },
+                  "required": [
+                    "enabled",
+                    "units",
+                    "interstitialEveryNScreens",
+                    "interstitialMinIntervalSeconds"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
+        ]
+      }
+    },
+    "/v1/admin/monetization/no-ads": {
+      "get": {
+        "operationId": "AdminMonetization_noAds",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "salesEnabled": {
+                      "type": "boolean"
+                    },
+                    "priceCents": {
+                      "type": "integer",
+                      "minimum": 100,
+                      "maximum": 100000
+                    }
+                  },
+                  "required": [
+                    "salesEnabled",
+                    "priceCents"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
+        ]
+      },
+      "put": {
+        "operationId": "AdminMonetization_setNoAds",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "salesEnabled": {
+                    "type": "boolean"
+                  },
+                  "priceCents": {
+                    "type": "integer",
+                    "minimum": 100,
+                    "maximum": 100000
+                  }
+                },
+                "required": [
+                  "salesEnabled",
+                  "priceCents"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "salesEnabled": {
+                      "type": "boolean"
+                    },
+                    "priceCents": {
+                      "type": "integer",
+                      "minimum": 100,
+                      "maximum": 100000
+                    }
+                  },
+                  "required": [
+                    "salesEnabled",
+                    "priceCents"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
+        ]
+      }
+    },
+    "/v1/admin/monetization/gateway": {
+      "get": {
+        "operationId": "AdminMonetization_gateway",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "provider": {
+                      "type": "string",
+                      "enum": [
+                        "ASAAS"
+                      ]
+                    },
+                    "environment": {
+                      "type": "string",
+                      "enum": [
+                        "SANDBOX",
+                        "PRODUCTION"
+                      ]
+                    },
+                    "hasApiKey": {
+                      "type": "boolean"
+                    },
+                    "hasWebhookToken": {
+                      "type": "boolean"
+                    },
+                    "pixExpirationMinutes": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "isActive": {
+                      "type": "boolean"
+                    },
+                    "lastWebhookAt": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "lastWebhookError": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "webhookUrl": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "environment",
+                    "hasApiKey",
+                    "hasWebhookToken",
+                    "pixExpirationMinutes",
+                    "isActive",
+                    "lastWebhookAt",
+                    "lastWebhookError",
+                    "webhookUrl"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
+        ]
+      },
+      "put": {
+        "operationId": "AdminMonetization_setGateway",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "environment": {
+                    "type": "string",
+                    "enum": [
+                      "SANDBOX",
+                      "PRODUCTION"
+                    ]
+                  },
+                  "apiKey": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "webhookToken": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "pixExpirationMinutes": {
+                    "type": "integer",
+                    "minimum": 5,
+                    "maximum": 1440
+                  },
+                  "isActive": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "environment",
+                  "pixExpirationMinutes",
+                  "isActive"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "provider": {
+                      "type": "string",
+                      "enum": [
+                        "ASAAS"
+                      ]
+                    },
+                    "environment": {
+                      "type": "string",
+                      "enum": [
+                        "SANDBOX",
+                        "PRODUCTION"
+                      ]
+                    },
+                    "hasApiKey": {
+                      "type": "boolean"
+                    },
+                    "hasWebhookToken": {
+                      "type": "boolean"
+                    },
+                    "pixExpirationMinutes": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "isActive": {
+                      "type": "boolean"
+                    },
+                    "lastWebhookAt": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "lastWebhookError": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "webhookUrl": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "provider",
+                    "environment",
+                    "hasApiKey",
+                    "hasWebhookToken",
+                    "pixExpirationMinutes",
+                    "isActive",
+                    "lastWebhookAt",
+                    "lastWebhookError",
+                    "webhookUrl"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
+        ]
+      }
+    },
+    "/v1/admin/monetization/payments": {
+      "get": {
+        "operationId": "AdminMonetization_payments",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "PAID",
+                "EXPIRED",
+                "CANCELED",
+                "REFUNDED",
+                "FAILED"
+              ]
+            }
+          },
+          {
+            "name": "provider",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "MERCADO_PAGO",
+                "ASAAS",
+                "EFI",
+                "APP_STORE",
+                "GOOGLE_PLAY"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 30,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "provider": {
+                            "type": "string",
+                            "enum": [
+                              "MERCADO_PAGO",
+                              "ASAAS",
+                              "EFI",
+                              "APP_STORE",
+                              "GOOGLE_PLAY"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "PAID",
+                              "EXPIRED",
+                              "CANCELED",
+                              "REFUNDED",
+                              "FAILED"
+                            ]
+                          },
+                          "amountCents": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "plan": {
+                            "type": "string"
+                          },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "email": {
+                                "nullable": true,
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "email"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "paidAt": {
+                            "nullable": true,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "provider",
+                          "status",
+                          "amountCents",
+                          "plan",
+                          "user",
+                          "createdAt",
+                          "paidAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "paidLast30Days": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "amountCents": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "count",
+                        "amountCents"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "nextCursor",
+                    "paidLast30Days"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
+        ]
+      }
+    },
+    "/v1/admin/monetization/entitlements": {
+      "get": {
+        "operationId": "AdminMonetization_entitlements",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "NO_ADS",
+                          "PRO"
+                        ]
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "nullable": true,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "email"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "startsAt": {
+                        "type": "string"
+                      },
+                      "expiresAt": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "revokedAt": {
+                        "nullable": true,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type",
+                      "source",
+                      "reason",
+                      "user",
+                      "startsAt",
+                      "expiresAt",
+                      "revokedAt"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
+        ]
+      },
+      "post": {
+        "operationId": "AdminMonetization_grant",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 254
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "NO_ADS",
+                      "PRO"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 300
+                  }
+                },
+                "required": [
+                  "email",
+                  "type",
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
+        ]
+      }
+    },
+    "/v1/admin/monetization/entitlements/{id}": {
+      "delete": {
+        "operationId": "AdminMonetization_revoke",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin: monetização"
         ]
       }
     }

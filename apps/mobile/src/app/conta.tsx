@@ -141,6 +141,22 @@ export default function Conta() {
 
         <Pressable
           style={styles.row}
+          onPress={() => router.push('/sem-anuncios')}
+          accessibilityRole="button"
+        >
+          <View style={{ flex: 1 }}>
+            <Text weight="semibold">Sem anúncios</Text>
+            <Text variant="muted" size={12}>
+              {user.entitlements.includes('NO_ADS')
+                ? 'Ativo nesta conta'
+                : 'Comprar ou restaurar compra'}
+            </Text>
+          </View>
+          <ChevronRight size={20} color={colors.textMuted} />
+        </Pressable>
+
+        <Pressable
+          style={styles.row}
           onPress={() => WebBrowser.openBrowserAsync(`${API_URL}/privacidade/`)}
         >
           <Text style={{ flex: 1 }}>Política de privacidade</Text>

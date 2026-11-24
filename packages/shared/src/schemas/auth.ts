@@ -121,6 +121,8 @@ export const meSchema = z.object({
   currentBeltId: z.uuid().nullable(),
   programId: z.uuid().nullable(),
   academyName: z.string().nullable(),
+  /** Direitos ativos (ex.: NO_ADS esconde os anúncios). */
+  entitlements: z.array(z.enum(['NO_ADS', 'PRO'])),
   hasPassword: z.boolean(),
   providers: z.array(z.enum(AUTH_PROVIDER_TYPES)),
   createdAt: z.string(),

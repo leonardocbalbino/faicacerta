@@ -3,6 +3,7 @@ import { Repeat } from 'lucide-react-native';
 import { useDeferredValue, useMemo, useState } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AdBanner } from '@/components/ad-banner';
 import { TechniqueRow } from '@/components/technique-row';
 import { BeltSwatch, Chip, IconButton, SearchField, StateView, Text } from '@/components/ui';
 import { useBelt, useSearch } from '@/lib/api';
@@ -137,26 +138,33 @@ export default function Apostila() {
           />
         }
         ListFooterComponent={
-          others.length > 0 || terms.length > 0 ? (
-            <View style={styles.more}>
-              <Text variant="label">Em todo o conteúdo</Text>
-              {others.map((t) => (
-                <TechniqueRow key={t.id} technique={t} />
-              ))}
-              {terms.map((g) => (
-                <Pressable
-                  key={g.id}
-                  onPress={() => router.push({ pathname: '/glossario', params: { q: g.japanese } })}
-                  style={styles.term}
-                >
-                  <Text variant="display" size={16}>
-                    {g.japanese}
-                  </Text>
-                  <Text variant="muted">Glossário · {g.translation}</Text>
-                </Pressable>
-              ))}
+          <>
+            {(others.length > 0 || terms.length > 0) && (
+              <View style={styles.more}>
+                <Text variant="label">Em todo o conteúdo</Text>
+                {others.map((t) => (
+                  <TechniqueRow key={t.id} technique={t} />
+                ))}
+                {terms.map((g) => (
+                  <Pressable
+                    key={g.id}
+                    onPress={() =>
+                      router.push({ pathname: '/glossario', params: { q: g.japanese } })
+                    }
+                    style={styles.term}
+                  >
+                    <Text variant="display" size={16}>
+                      {g.japanese}
+                    </Text>
+                    <Text variant="muted">Glossário · {g.translation}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
+            <View style={{ paddingTop: 20 }}>
+              <AdBanner />
             </View>
-          ) : undefined
+          </>
         }
       />
     </View>

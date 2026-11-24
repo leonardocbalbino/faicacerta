@@ -190,6 +190,8 @@ enum PaymentProviderCode {
   MERCADO_PAGO
   ASAAS
   EFI
+  APP_STORE // compra pela Apple (StoreKit 2)
+  GOOGLE_PLAY // compra pelo Google Play Billing
 }
 
 enum GatewayEnvironment {

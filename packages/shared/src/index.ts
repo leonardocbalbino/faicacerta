@@ -10,3 +10,5 @@ export * from './schemas/content.js';
 export * from './schemas/journey.js';
 export * from './schemas/media.js';
 export * from './utils/age.js';
+export * from './schemas/monetization.js';
+export * from './utils/cpf.js';

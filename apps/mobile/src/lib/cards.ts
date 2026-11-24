@@ -1,7 +1,7 @@
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import { useState, type ComponentRef, type RefObject } from 'react';
-import { Alert, type View } from 'react-native';
+import { Alert, Platform, type View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import type { CardData } from '@/components/story-card';
 import { useTimeline } from './api';
@@ -60,16 +60,32 @@ export function useCardExport(
       result: 'tmpfile',
     });
 
+  /** Abre o menu de compartilhar do sistema (Instagram, WhatsApp, "Salvar imagem"...). */
+  const openShare = async (uri: string, title: string) => {
+    if (!(await Sharing.isAvailableAsync())) {
+      Alert.alert('Compartilhar indisponível', 'Tente de novo mais tarde.');
+      return;
+    }
+    await Sharing.shareAsync(uri, { mimeType: 'image/png', UTI: 'public.png', dialogTitle: title });
+  };
+
   const save = async () => {
     setBusy('save');
     try {
-      const { granted } = await MediaLibrary.requestPermissionsAsync(true);
-      if (!granted) {
-        Alert.alert('Sem permissão', 'Permita o acesso às fotos nos Ajustes para salvar o card.');
-        return;
+      const uri = await capture();
+      // Só pede permissão de gravação. No Android ela pode não existir (o app não
+      // lê a galeria); aí o menu do sistema oferece "Salvar na galeria".
+      const { granted } = await MediaLibrary.requestPermissionsAsync(true).catch(() => ({
+        granted: false,
+      }));
+      if (granted) {
+        await MediaLibrary.saveToLibraryAsync(uri);
+        Alert.alert('Salvo!', 'O card está na sua galeria.');
+      } else if (Platform.OS === 'android') {
+        await openShare(uri, 'Salvar imagem');
+      } else {
+        Alert.alert('Sem permissão', 'Permita adicionar fotos nos Ajustes para salvar o card.');
       }
-      await MediaLibrary.saveToLibraryAsync(await capture());
-      Alert.alert('Salvo!', 'O card está na sua galeria.');
     } catch {
       Alert.alert('Não deu para salvar', 'Tente de novo.');
     } finally {
@@ -77,20 +93,10 @@ export function useCardExport(
     }
   };
 
-  /** Abre o menu de compartilhar do sistema (Instagram, WhatsApp...). */
   const share = async () => {
     setBusy('share');
     try {
-      const uri = await capture();
-      if (!(await Sharing.isAvailableAsync())) {
-        Alert.alert('Compartilhar indisponível', 'Use "Salvar imagem" e poste pela galeria.');
-        return;
-      }
-      await Sharing.shareAsync(uri, {
-        mimeType: 'image/png',
-        UTI: 'public.png',
-        dialogTitle: 'Postar nos stories',
-      });
+      await openShare(await capture(), 'Postar nos stories');
     } catch {
       /* o usuário fechou o menu */
     } finally {

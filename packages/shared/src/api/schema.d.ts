@@ -1028,6 +1028,182 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Billing_config"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/billing/entitlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Billing_entitlements"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/billing/store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Billing_store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/billing/pix": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Billing_pix"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/billing/payments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Billing_payment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/monetization/ads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminMonetization_ads"];
+        put: operations["AdminMonetization_setAds"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/monetization/no-ads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminMonetization_noAds"];
+        put: operations["AdminMonetization_setNoAds"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/monetization/gateway": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminMonetization_gateway"];
+        put: operations["AdminMonetization_setGateway"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/monetization/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminMonetization_payments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/monetization/entitlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminMonetization_entitlements"];
+        put?: never;
+        post: operations["AdminMonetization_grant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/monetization/entitlements/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["AdminMonetization_revoke"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1070,6 +1246,7 @@ export interface operations {
                         /** Format: uuid */
                         programId: string | null;
                         academyName: string | null;
+                        entitlements: ("NO_ADS" | "PRO")[];
                         hasPassword: boolean;
                         providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                         createdAt: string;
@@ -1119,6 +1296,7 @@ export interface operations {
                         /** Format: uuid */
                         programId: string | null;
                         academyName: string | null;
+                        entitlements: ("NO_ADS" | "PRO")[];
                         hasPassword: boolean;
                         providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                         createdAt: string;
@@ -1485,6 +1663,7 @@ export interface operations {
                             /** Format: uuid */
                             programId: string | null;
                             academyName: string | null;
+                            entitlements: ("NO_ADS" | "PRO")[];
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -1536,6 +1715,7 @@ export interface operations {
                             /** Format: uuid */
                             programId: string | null;
                             academyName: string | null;
+                            entitlements: ("NO_ADS" | "PRO")[];
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -1586,6 +1766,7 @@ export interface operations {
                             /** Format: uuid */
                             programId: string | null;
                             academyName: string | null;
+                            entitlements: ("NO_ADS" | "PRO")[];
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -1660,6 +1841,7 @@ export interface operations {
                             /** Format: uuid */
                             programId: string | null;
                             academyName: string | null;
+                            entitlements: ("NO_ADS" | "PRO")[];
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -1712,6 +1894,7 @@ export interface operations {
                             /** Format: uuid */
                             programId: string | null;
                             academyName: string | null;
+                            entitlements: ("NO_ADS" | "PRO")[];
                             hasPassword: boolean;
                             providers: ("EMAIL" | "GOOGLE" | "APPLE")[];
                             createdAt: string;
@@ -5824,6 +6007,502 @@ export interface operations {
                         }[];
                     };
                 };
+            };
+        };
+    };
+    Billing_config: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        ads: {
+                            enabled: boolean;
+                            units: {
+                                ios: {
+                                    banner: string;
+                                    interstitial: string;
+                                };
+                                android: {
+                                    banner: string;
+                                    interstitial: string;
+                                };
+                            };
+                            interstitialEveryNScreens: number;
+                            interstitialMinIntervalSeconds: number;
+                        };
+                        noAds: {
+                            salesEnabled: boolean;
+                            priceCents: number;
+                            storeProductId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    Billing_entitlements: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        entitlements: ("NO_ADS" | "PRO")[];
+                    };
+                };
+            };
+        };
+    };
+    Billing_store: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    platform: "ios";
+                    signedTransaction: string;
+                } | {
+                    /** @enum {string} */
+                    platform: "android";
+                    productId: string;
+                    purchaseToken: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        entitlements: ("NO_ADS" | "PRO")[];
+                    };
+                };
+            };
+        };
+    };
+    Billing_pix: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    cpf: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        paymentId: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "PAID" | "EXPIRED" | "CANCELED" | "REFUNDED" | "FAILED";
+                        amountCents: number;
+                        copiaECola: string | null;
+                        qrCodeBase64: string | null;
+                        expiresAt: string | null;
+                    };
+                };
+            };
+        };
+    };
+    Billing_payment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        paymentId: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "PAID" | "EXPIRED" | "CANCELED" | "REFUNDED" | "FAILED";
+                        amountCents: number;
+                        copiaECola: string | null;
+                        qrCodeBase64: string | null;
+                        expiresAt: string | null;
+                    };
+                };
+            };
+        };
+    };
+    AdminMonetization_ads: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        enabled: boolean;
+                        units: {
+                            ios: {
+                                banner: string;
+                                interstitial: string;
+                            };
+                            android: {
+                                banner: string;
+                                interstitial: string;
+                            };
+                        };
+                        interstitialEveryNScreens: number;
+                        interstitialMinIntervalSeconds: number;
+                    };
+                };
+            };
+        };
+    };
+    AdminMonetization_setAds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    enabled: boolean;
+                    units: {
+                        ios: {
+                            banner: string;
+                            interstitial: string;
+                        };
+                        android: {
+                            banner: string;
+                            interstitial: string;
+                        };
+                    };
+                    interstitialEveryNScreens: number;
+                    interstitialMinIntervalSeconds: number;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        enabled: boolean;
+                        units: {
+                            ios: {
+                                banner: string;
+                                interstitial: string;
+                            };
+                            android: {
+                                banner: string;
+                                interstitial: string;
+                            };
+                        };
+                        interstitialEveryNScreens: number;
+                        interstitialMinIntervalSeconds: number;
+                    };
+                };
+            };
+        };
+    };
+    AdminMonetization_noAds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        salesEnabled: boolean;
+                        priceCents: number;
+                    };
+                };
+            };
+        };
+    };
+    AdminMonetization_setNoAds: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    salesEnabled: boolean;
+                    priceCents: number;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        salesEnabled: boolean;
+                        priceCents: number;
+                    };
+                };
+            };
+        };
+    };
+    AdminMonetization_gateway: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        provider: "ASAAS";
+                        /** @enum {string} */
+                        environment: "SANDBOX" | "PRODUCTION";
+                        hasApiKey: boolean;
+                        hasWebhookToken: boolean;
+                        pixExpirationMinutes: number;
+                        isActive: boolean;
+                        lastWebhookAt: string | null;
+                        lastWebhookError: string | null;
+                        webhookUrl: string;
+                    };
+                };
+            };
+        };
+    };
+    AdminMonetization_setGateway: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    environment: "SANDBOX" | "PRODUCTION";
+                    apiKey?: string;
+                    webhookToken?: string;
+                    pixExpirationMinutes: number;
+                    isActive: boolean;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        provider: "ASAAS";
+                        /** @enum {string} */
+                        environment: "SANDBOX" | "PRODUCTION";
+                        hasApiKey: boolean;
+                        hasWebhookToken: boolean;
+                        pixExpirationMinutes: number;
+                        isActive: boolean;
+                        lastWebhookAt: string | null;
+                        lastWebhookError: string | null;
+                        webhookUrl: string;
+                    };
+                };
+            };
+        };
+    };
+    AdminMonetization_payments: {
+        parameters: {
+            query?: {
+                status?: "PENDING" | "PAID" | "EXPIRED" | "CANCELED" | "REFUNDED" | "FAILED";
+                provider?: "MERCADO_PAGO" | "ASAAS" | "EFI" | "APP_STORE" | "GOOGLE_PLAY";
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            /** Format: uuid */
+                            id: string;
+                            /** @enum {string} */
+                            provider: "MERCADO_PAGO" | "ASAAS" | "EFI" | "APP_STORE" | "GOOGLE_PLAY";
+                            /** @enum {string} */
+                            status: "PENDING" | "PAID" | "EXPIRED" | "CANCELED" | "REFUNDED" | "FAILED";
+                            amountCents: number;
+                            plan: string;
+                            user: {
+                                /** Format: uuid */
+                                id: string;
+                                name: string;
+                                email: string | null;
+                            };
+                            createdAt: string;
+                            paidAt: string | null;
+                        }[];
+                        /** Format: uuid */
+                        nextCursor: string | null;
+                        paidLast30Days: {
+                            count: number;
+                            amountCents: number;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    AdminMonetization_entitlements: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        id: string;
+                        /** @enum {string} */
+                        type: "NO_ADS" | "PRO";
+                        source: string;
+                        reason: string | null;
+                        user: {
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            email: string | null;
+                        };
+                        startsAt: string;
+                        expiresAt: string | null;
+                        revokedAt: string | null;
+                    }[];
+                };
+            };
+        };
+    };
+    AdminMonetization_grant: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    email: string;
+                    /** @enum {string} */
+                    type: "NO_ADS" | "PRO";
+                    reason: string;
+                };
+            };
+        };
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminMonetization_revoke: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

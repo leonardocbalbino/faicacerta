@@ -39,6 +39,8 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
   updateProfile: (input: ProfileUpdateInput) => Promise<void>;
   deleteAccount: () => Promise<void>;
+  /** Recarrega a conta (ex.: depois de uma compra). */
+  refreshUser: () => Promise<void>;
   syncNow: () => Promise<void>;
 }
 
@@ -239,6 +241,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         rememberUser(null);
         qc.removeQueries({ queryKey: ['me'] });
         setStatus('signedOut');
+      },
+      refreshUser: async () => {
+        rememberUser(await unwrap<Me>(api.GET('/v1/me')));
       },
       updateProfile: async (input) => {
         rememberUser(await unwrap<Me>(api.PATCH('/v1/me', { body: input })));

@@ -3,6 +3,7 @@ import { ArrowRight, BookOpen, Heart, Languages, Play, Repeat, Search } from 'lu
 import type { ReactNode } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AdBanner } from '@/components/ad-banner';
 import { categoryPath } from '@/components/technique-row';
 import {
   BeltSwatch,
@@ -185,6 +186,7 @@ export default function Home() {
               onPress={() => router.push('/faixas')}
             />
           </View>
+          <AdBanner />
         </>
       )}
     </ScrollView>

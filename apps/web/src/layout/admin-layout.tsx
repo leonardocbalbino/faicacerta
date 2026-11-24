@@ -9,6 +9,7 @@ import {
   Medal,
   Sun,
   Swords,
+  Wallet,
   type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
@@ -53,7 +54,7 @@ export function RequireStaff({ children }: { children: ReactNode }) {
 
 export function AdminLayout() {
   const m = useMessages();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
 
   const nav: { to: string; label: string; icon: LucideIcon }[] = [
@@ -64,6 +65,7 @@ export function AdminLayout() {
     { to: '/quiz', label: m.nav.quiz, icon: ListChecks },
     { to: '/textos', label: m.nav.articles, icon: BookOpenText },
     { to: '/midia', label: m.nav.media, icon: Images },
+    ...(isAdmin ? [{ to: '/monetizacao', label: m.nav.monetization, icon: Wallet }] : []),
   ];
 
   return (

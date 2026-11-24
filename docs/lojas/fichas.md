@@ -61,7 +61,12 @@ SEU PROGRESSO
 • A técnica do dia sugere o que revisar
 • Troque de faixa quando for aprovado
 
-Sem cadastro e sem anúncios nesta versão: abra e comece a estudar.
+MINHA JORNADA
+• Crie sua conta e guarde progresso e favoritas em qualquer celular
+• Linha do tempo com graduações, campeonatos e seminários
+• Cards prontos para postar nos stories, com a cor da faixa ou a sua foto
+
+Não precisa de cadastro para estudar: abra e comece. Quer estudar sem anúncios? Compre uma vez e vale para sempre na sua conta.
 
 O Faixa Certa é um material de apoio e não substitui as aulas e a orientação do seu professor. Os requisitos de cada exame podem variar conforme a federação e a academia.
 ```
@@ -82,16 +87,28 @@ Primeira versão: apostila por faixa, técnicas com vídeo e passo a passo, glos
 
 **Classificação etária**: responder "Nenhum" em todas as perguntas → **4+**
 
-**Privacidade do app** (App Store Connect → Privacidade do app): **"Dados não coletados"**.
-O app não tem login, análise de uso, anúncios nem SDKs de rastreamento nesta versão.
+**Privacidade do app** (App Store Connect → Privacidade do app). A partir da Etapa 5/6 o app
+coleta dados. Responder:
+
+| Tipo de dado                                          | Coletado | Vinculado ao usuário | Rastreamento | Finalidade               |
+| ----------------------------------------------------- | -------- | -------------------- | ------------ | ------------------------ |
+| Nome, e-mail (Informações de contato)                 | Sim      | Sim                  | Não          | Funcionalidade do app    |
+| ID do usuário (Identificadores)                       | Sim      | Sim                  | Não          | Funcionalidade do app    |
+| Histórico de compras (Compras)                        | Sim      | Sim                  | Não          | Funcionalidade do app    |
+| Outro conteúdo do usuário (linha do tempo, progresso) | Sim      | Sim                  | Não          | Funcionalidade do app    |
+| Dados de publicidade, ID do dispositivo (AdMob)       | Sim      | Não                  | **Não**      | Publicidade de terceiros |
+| Dados de diagnóstico/desempenho (AdMob)               | Sim      | Não                  | Não          | Publicidade de terceiros |
+
+Rastreamento: **Não** (anúncios não personalizados, sem pedido de ATT). Fotos dos cards não
+são coletadas (ficam no aparelho).
 
 **Informações para a revisão da Apple** → Notas (máx. 4.000)
 
 ```
-O app não exige login nem cadastro. Ao abrir, escolha qualquer faixa (por exemplo, "Branca") e toque em Continuar: o app mostra a apostila da faixa seguinte. Abra uma técnica para ver o conteúdo e use "Já domino" para marcar o progresso, que fica salvo apenas no aparelho. O conteúdo vem de nossa API pública (https://app-faixacerta.com.br).
+O app pode ser usado sem login. Ao abrir, escolha qualquer faixa (por exemplo, "Branca") e toque em Continuar; na tela seguinte toque em "Agora não, só quero estudar". Para testar conta, linha do tempo e cards, use a conta de demonstração abaixo. A compra "Sem Anúncios" é um produto não consumível (sem_anuncios); a conta pode ser excluída em Minha conta → Excluir conta.
 ```
 
-Desmarcar "Login necessário" (não há conta de demonstração a informar).
+Informar uma **conta de demonstração** (criar uma conta de e-mail só para a revisão, com alguns marcos na linha do tempo) em "Login necessário".
 
 ---
 
@@ -117,17 +134,22 @@ Apostila do exame de faixa de judô: técnicas com vídeo, glossário e progress
 
 ### Segurança dos dados (Play Console → Conteúdo do app → Segurança dos dados)
 
-- O app coleta ou compartilha algum dos tipos de dados exigidos? **Não**
+- O app coleta ou compartilha algum dos tipos de dados exigidos? **Sim**
+  - Informações pessoais: nome, e-mail (conta) — coletados, obrigatórios só para quem cria conta
+  - Informações financeiras: histórico de compras — coletado
+  - Atividade no app: interações e conteúdo gerado (progresso, linha do tempo) — coletado
+  - IDs do dispositivo ou outros IDs (AdMob) — coletados e compartilhados com o Google para publicidade
+- Os dados são processados de forma efêmera? Não (exceto o CPF do Pix, repassado ao Asaas e não guardado)
 - Os dados são criptografados em trânsito? **Sim** (HTTPS)
-- Os usuários podem pedir a exclusão dos dados? Não se aplica (nenhum dado coletado)
+- Os usuários podem pedir a exclusão dos dados? **Sim**: no app (Minha conta → Excluir conta) e pelo link `https://app-faixacerta.com.br/excluir-conta` (campo "URL de exclusão de conta").
 
 ### Outros itens de "Conteúdo do app"
 
 | Item                        | Resposta                                                                |
 | --------------------------- | ----------------------------------------------------------------------- |
 | Política de privacidade     | `https://app-faixacerta.com.br/privacidade`                             |
-| Anúncios                    | Não contém anúncios                                                     |
-| Acesso ao app               | Todas as funcionalidades sem restrições (sem login)                     |
+| Anúncios                    | **Contém anúncios** (AdMob, não personalizados)                         |
+| Acesso ao app               | Algumas funções exigem login: informar conta de demonstração            |
 | Classificação do conteúdo   | Questionário IARC, categoria "Referência, notícias ou educação" → Livre |
 | Público-alvo                | 13+ (se marcar menores de 13, entra nas regras da Família do Google)    |
 | App de notícias             | Não                                                                     |

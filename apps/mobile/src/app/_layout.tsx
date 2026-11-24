@@ -16,6 +16,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AdsProvider } from '@/lib/ads';
 import { AuthProvider, useAuth } from '@/lib/auth';
 import { PrefsProvider, usePrefs } from '@/lib/prefs';
 import { colors } from '@/theme';
@@ -45,8 +46,10 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <PrefsProvider>
           <AuthProvider>
-            <StatusBar style="light" />
-            {fontsReady && <Navigator />}
+            <AdsProvider>
+              <StatusBar style="light" />
+              {fontsReady && <Navigator />}
+            </AdsProvider>
           </AuthProvider>
         </PrefsProvider>
       </QueryClientProvider>
@@ -87,6 +90,7 @@ function Navigator() {
       <Stack.Screen name="marco" options={MODAL} />
       <Stack.Screen name="card" />
       <Stack.Screen name="card-foto" />
+      <Stack.Screen name="sem-anuncios" options={MODAL} />
     </Stack>
   );
 }

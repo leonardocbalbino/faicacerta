@@ -4,6 +4,7 @@ import { Volume2 } from 'lucide-react-native';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AdBanner } from '@/components/ad-banner';
 import { Chip, SearchField, StateView, Text } from '@/components/ui';
 import { useGlossary } from '@/lib/api';
 import { usePronunciation } from '@/lib/audio';
@@ -88,6 +89,11 @@ export default function Glossario() {
             onPlay={() => item.audioUrl && play(item.audioUrl)}
           />
         )}
+        ListFooterComponent={
+          <View style={{ paddingTop: 20 }}>
+            <AdBanner />
+          </View>
+        }
         ListEmptyComponent={
           <StateView
             loading={glossary.isPending}

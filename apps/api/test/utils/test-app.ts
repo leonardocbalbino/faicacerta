@@ -1,5 +1,5 @@
 import type { NestExpressApplication } from '@nestjs/platform-express';
-import { Test } from '@nestjs/testing';
+import { Test, type TestingModuleBuilder } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module.js';
 import { configureApp } from '../../src/bootstrap.js';
 import { MailService, type MailMessage } from '../../src/infra/mail/mail.service.js';
@@ -68,10 +68,13 @@ export interface TestContext {
   storage: LocalStorageService;
 }
 
-export async function createTestApp(): Promise<TestContext> {
+/** `customize` permite trocar provedores (ex.: verificadores das lojas) em uma suíte. */
+export async function createTestApp(
+  customize: (builder: TestingModuleBuilder) => TestingModuleBuilder = (b) => b,
+): Promise<TestContext> {
   const mail = new FakeMailService();
   const storage = await new LocalStorageService().init();
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
+  const builder = Test.createTestingModule({ imports: [AppModule] })
     .overrideProvider(MailService)
     .useValue(mail)
     .overrideProvider(StorageService)
@@ -79,8 +82,8 @@ export async function createTestApp(): Promise<TestContext> {
     .overrideProvider(GoogleTokenVerifier)
     .useClass(FakeGoogleVerifier)
     .overrideProvider(AppleTokenVerifier)
-    .useClass(FakeAppleVerifier)
-    .compile();
+    .useClass(FakeAppleVerifier);
+  const moduleRef = await customize(builder).compile();
 
   const app = moduleRef.createNestApplication<NestExpressApplication>({ logger: false });
   configureApp(app);

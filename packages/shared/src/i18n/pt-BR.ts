@@ -42,6 +42,22 @@ export const ptBR = {
   'media.wrongType': 'O tipo da mídia não serve para este campo.',
   'media.mustBePublic': 'O conteúdo base só aceita mídia pública, enviada pelo CMS.',
 
+  'billing.storeUnavailable':
+    'Não foi possível confirmar a compra com a loja agora. Tente de novo.',
+  'billing.storeNotConfigured': 'A confirmação de compras desta loja ainda não está configurada.',
+  'billing.invalidPurchase': 'Não foi possível confirmar esta compra.',
+  'billing.purchaseRevoked': 'Esta compra foi reembolsada ou cancelada pela loja.',
+  'billing.purchasePending': 'A compra ainda está pendente na loja.',
+  'billing.unknownProduct': 'Produto desconhecido.',
+  'billing.purchaseOwnedByAnotherAccount':
+    'Esta compra já está vinculada a outra conta do Faixa Certa.',
+  'billing.alreadyOwned': 'Você já tem o Sem Anúncios.',
+  'billing.salesDisabled': 'As vendas estão pausadas no momento.',
+  'billing.planMissing': 'O plano não está configurado.',
+  'billing.gatewayNotConfigured': 'O pagamento por Pix ainda não está disponível.',
+  'billing.gatewayError': 'O serviço de pagamento não respondeu. Tente de novo em instantes.',
+  'billing.apiKeyRequired': 'Informe a chave de API do Asaas.',
+
   'mail.verifyEmail.subject': 'Confirme seu e-mail no Faixa Certa',
   'mail.verifyEmail.body':
     'Olá, {name}!\n\nPara confirmar seu e-mail, acesse:\n{link}\n\nO link vale por 24 horas.',
