@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+**/.turbo
+**/*.tsbuildinfo
+**/.env
+**/.env.*
+!**/.env.example
+.git
+apps/api/src/generated
+apps/mobile
+docs
