@@ -78,6 +78,12 @@
         "projectId": "6b00f197-38b5-40ee-96ce-3f61b26eda0b"
       }
     },
-    "owner": "leonardocbalbino"
+    "owner": "leonardocbalbino",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6b00f197-38b5-40ee-96ce-3f61b26eda0b"
+    }
   }
 }
