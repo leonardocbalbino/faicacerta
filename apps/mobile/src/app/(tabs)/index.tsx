@@ -1,4 +1,4 @@
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { ArrowRight, BookOpen, Heart, Languages, Play, Repeat, Search } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -129,38 +129,42 @@ export default function Home() {
               <Text variant="display" size={18}>
                 Técnica do dia
               </Text>
-              <Link href={{ pathname: '/tecnica/[slug]', params: { slug: ofTheDay.slug } }} asChild>
-                <Pressable style={({ pressed }) => [styles.daily, pressed && { opacity: 0.8 }]}>
-                  <View style={styles.thumb}>
-                    {ofTheDay.thumbUrl ? (
-                      <Image
-                        source={{ uri: ofTheDay.thumbUrl }}
-                        style={StyleSheet.absoluteFill}
-                        resizeMode="cover"
-                      />
-                    ) : null}
-                    <View style={styles.play}>
-                      <Play size={16} color={colors.ink} fill={colors.ink} />
-                    </View>
-                    {formatDuration(ofTheDay.videoDurationMs) && (
-                      <Text weight="semibold" size={10} style={styles.duration}>
-                        {formatDuration(ofTheDay.videoDurationMs)}
-                      </Text>
-                    )}
+              <Pressable
+                accessibilityRole="button"
+                onPress={() =>
+                  router.push({ pathname: '/tecnica/[slug]', params: { slug: ofTheDay.slug } })
+                }
+                style={({ pressed }) => [styles.daily, pressed && { opacity: 0.8 }]}
+              >
+                <View style={styles.thumb}>
+                  {ofTheDay.thumbUrl ? (
+                    <Image
+                      source={{ uri: ofTheDay.thumbUrl }}
+                      style={StyleSheet.absoluteFill}
+                      resizeMode="cover"
+                    />
+                  ) : null}
+                  <View style={styles.play}>
+                    <Play size={16} color={colors.ink} fill={colors.ink} />
                   </View>
-                  <View style={{ flex: 1, gap: 4 }}>
-                    <Text variant="display" size={18} numberOfLines={1}>
-                      {ofTheDay.japaneseName}
+                  {formatDuration(ofTheDay.videoDurationMs) && (
+                    <Text weight="semibold" size={10} style={styles.duration}>
+                      {formatDuration(ofTheDay.videoDurationMs)}
                     </Text>
-                    <Text variant="muted" numberOfLines={1}>
-                      {ofTheDay.translation}
-                    </Text>
-                    <Text variant="muted" size={12} numberOfLines={1}>
-                      {categoryPath(ofTheDay)}
-                    </Text>
-                  </View>
-                </Pressable>
-              </Link>
+                  )}
+                </View>
+                <View style={{ flex: 1, gap: 4 }}>
+                  <Text variant="display" size={18} numberOfLines={1}>
+                    {ofTheDay.japaneseName}
+                  </Text>
+                  <Text variant="muted" numberOfLines={1}>
+                    {ofTheDay.translation}
+                  </Text>
+                  <Text variant="muted" size={12} numberOfLines={1}>
+                    {categoryPath(ofTheDay)}
+                  </Text>
+                </View>
+              </Pressable>
             </View>
           )}
 
