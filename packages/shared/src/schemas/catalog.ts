@@ -84,6 +84,11 @@ export const catalogTechniqueSchema = catalogTechniqueItemSchema.extend({
   examinerCriteria: z.string().nullable(),
   pronunciationAudioUrl: z.string().nullable(),
   video: catalogMediaSchema.nullable(),
+  /** Vídeo no YouTube (usado quando não há vídeo próprio enviado). */
+  youtube: z
+    .object({ id: z.string(), url: z.string(), thumbUrl: z.string() })
+    .nullable()
+    .optional(),
   steps: z.array(catalogMediaSchema),
   gallery: z.array(catalogMediaSchema),
   related: z.array(catalogTechniqueItemSchema),

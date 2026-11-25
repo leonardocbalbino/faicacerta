@@ -22,9 +22,13 @@ import { articles } from './data/articles.js';
 import { categories } from './data/categories.js';
 import { glossary } from './data/glossary.js';
 import { plans, remoteConfig } from './data/monetization.js';
-import { belts, program as programSeed } from './data/program.js';
+import { kodokanTechniques } from './data/kodokan.js';
+import { belts, LEGACY_PROGRAM_NAME, program as programSeed } from './data/program.js';
 import { quiz } from './data/quiz.js';
-import { techniques } from './data/techniques.js';
+import { techniques as baseTechniques } from './data/techniques.js';
+import { videoUrlFor } from './data/videos.js';
+
+const techniques = [...baseTechniques, ...kodokanTechniques];
 
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) throw new Error('DATABASE_URL não definida');
@@ -80,6 +84,7 @@ async function seedTechniques(categoryIds: Map<string, string>) {
       keyPoints: t.keyPoints ?? [],
       commonMistakes: t.commonMistakes ?? [],
       examinerCriteria: t.examinerCriteria ?? null,
+      youtubeUrl: videoUrlFor(t.slug),
       status: PUBLISHED,
       publishedAt: new Date(),
     };
@@ -107,12 +112,17 @@ async function seedTechniques(categoryIds: Map<string, string>) {
 }
 
 async function seedProgram(techniqueIds: Map<string, string>) {
-  let program = await prisma.program.findFirst({
-    where: { name: programSeed.name, isBase: true, deletedAt: null },
+  // Reaproveita o programa base existente (mesmo com o nome antigo) para não
+  // desvincular os alunos que já escolheram faixa.
+  const existing = await prisma.program.findFirst({
+    where: { name: { in: [programSeed.name, LEGACY_PROGRAM_NAME] }, isBase: true, deletedAt: null },
   });
-  program ??= await prisma.program.create({
-    data: { ...programSeed, isBase: true, status: PUBLISHED },
-  });
+  const program = existing
+    ? await prisma.program.update({
+        where: { id: existing.id },
+        data: { name: programSeed.name, description: programSeed.description },
+      })
+    : await prisma.program.create({ data: { ...programSeed, isBase: true, status: PUBLISHED } });
 
   const beltIds = new Map<string, string>();
   for (const b of belts) {
@@ -127,6 +137,13 @@ async function seedProgram(techniqueIds: Map<string, string>) {
       ...b.mandatory.map((slug) => ({ slug, type: RequirementType.MANDATORY })),
       ...(b.optional ?? []).map((slug) => ({ slug, type: RequirementType.OPTIONAL })),
     ];
+    // O programa base segue o seed: remove técnicas que mudaram de faixa.
+    await prisma.beltRequirement.deleteMany({
+      where: {
+        beltId: belt.id,
+        technique: { slug: { notIn: reqs.map((r) => r.slug) } },
+      },
+    });
     for (const [order, r] of reqs.entries()) {
       const techniqueId = techniqueIds.get(r.slug);
       if (!techniqueId) throw new Error(`Técnica desconhecida na faixa ${b.name}: ${r.slug}`);

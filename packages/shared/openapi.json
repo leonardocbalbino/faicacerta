@@ -5067,6 +5067,11 @@
                     "nullable": true,
                     "type": "string",
                     "maxLength": 2000
+                  },
+                  "youtubeUrl": {
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 300
                   }
                 },
                 "required": [
@@ -5182,6 +5187,10 @@
                       }
                     },
                     "examinerCriteria": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "youtubeUrl": {
                       "nullable": true,
                       "type": "string"
                     },
@@ -5531,6 +5540,7 @@
                     "keyPoints",
                     "commonMistakes",
                     "examinerCriteria",
+                    "youtubeUrl",
                     "publishedAt",
                     "pronunciationAudio",
                     "media",
@@ -5674,6 +5684,10 @@
                       "nullable": true,
                       "type": "string"
                     },
+                    "youtubeUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
                     "publishedAt": {
                       "nullable": true,
                       "type": "string"
@@ -6020,6 +6034,7 @@
                     "keyPoints",
                     "commonMistakes",
                     "examinerCriteria",
+                    "youtubeUrl",
                     "publishedAt",
                     "pronunciationAudio",
                     "media",
@@ -6139,6 +6154,11 @@
                     "type": "string",
                     "maxLength": 2000
                   },
+                  "youtubeUrl": {
+                    "nullable": true,
+                    "type": "string",
+                    "maxLength": 300
+                  },
                   "comment": {
                     "type": "string",
                     "maxLength": 500
@@ -6251,6 +6271,10 @@
                       }
                     },
                     "examinerCriteria": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "youtubeUrl": {
                       "nullable": true,
                       "type": "string"
                     },
@@ -6600,6 +6624,7 @@
                     "keyPoints",
                     "commonMistakes",
                     "examinerCriteria",
+                    "youtubeUrl",
                     "publishedAt",
                     "pronunciationAudio",
                     "media",
@@ -6817,6 +6842,10 @@
                       "nullable": true,
                       "type": "string"
                     },
+                    "youtubeUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
                     "publishedAt": {
                       "nullable": true,
                       "type": "string"
@@ -7163,6 +7192,7 @@
                     "keyPoints",
                     "commonMistakes",
                     "examinerCriteria",
+                    "youtubeUrl",
                     "publishedAt",
                     "pronunciationAudio",
                     "media",
@@ -7330,6 +7360,10 @@
                       "nullable": true,
                       "type": "string"
                     },
+                    "youtubeUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
                     "publishedAt": {
                       "nullable": true,
                       "type": "string"
@@ -7676,6 +7710,7 @@
                     "keyPoints",
                     "commonMistakes",
                     "examinerCriteria",
+                    "youtubeUrl",
                     "publishedAt",
                     "pronunciationAudio",
                     "media",
@@ -7847,6 +7882,10 @@
                       "nullable": true,
                       "type": "string"
                     },
+                    "youtubeUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
                     "publishedAt": {
                       "nullable": true,
                       "type": "string"
@@ -8193,6 +8232,7 @@
                     "keyPoints",
                     "commonMistakes",
                     "examinerCriteria",
+                    "youtubeUrl",
                     "publishedAt",
                     "pronunciationAudio",
                     "media",
@@ -8537,6 +8577,10 @@
                       "nullable": true,
                       "type": "string"
                     },
+                    "youtubeUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
                     "publishedAt": {
                       "nullable": true,
                       "type": "string"
@@ -8883,6 +8927,7 @@
                     "keyPoints",
                     "commonMistakes",
                     "examinerCriteria",
+                    "youtubeUrl",
                     "publishedAt",
                     "pronunciationAudio",
                     "media",
@@ -15592,6 +15637,27 @@
                         "width",
                         "height",
                         "caption"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "youtube": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "thumbUrl": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "url",
+                        "thumbUrl"
                       ],
                       "additionalProperties": false
                     },

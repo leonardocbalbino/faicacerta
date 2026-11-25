@@ -1,5 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { techniqueInputSchema, type Media, type TechniqueDetail } from '@faixa-certa/shared';
+import {
+  parseYoutubeId,
+  techniqueInputSchema,
+  youtubeThumbUrl,
+  youtubeWatchUrl,
+  type Media,
+  type TechniqueDetail,
+} from '@faixa-certa/shared';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -53,11 +60,13 @@ export function TechniqueForm({
           keyPoints: technique.keyPoints,
           commonMistakes: technique.commonMistakes,
           examinerCriteria: technique.examinerCriteria ?? '',
+          youtubeUrl: technique.youtubeUrl ?? '',
           comment: '',
         }
       : { slug: '', japaneseName: '', translation: '', keyPoints: [], commonMistakes: [] },
   });
   const { errors, isSubmitting } = form.formState;
+  const youtubeId = parseYoutubeId(form.watch('youtubeUrl'));
 
   const submit = form.handleSubmit(async (values) => {
     try {
@@ -202,6 +211,36 @@ export function TechniqueForm({
       <div className="space-y-2">
         <Label htmlFor="t-examinerCriteria">{m.techniques.examinerCriteria}</Label>
         <Textarea rows={3} {...field('examinerCriteria')} {...form.register('examinerCriteria')} />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="t-youtubeUrl">
+          {m.techniques.youtubeUrl}{' '}
+          <span className="text-muted-foreground">({m.common.optional})</span>
+        </Label>
+        <Input
+          type="url"
+          inputMode="url"
+          placeholder="https://www.youtube.com/watch?v=…"
+          {...field('youtubeUrl')}
+          {...form.register('youtubeUrl')}
+        />
+        <p className="text-sm text-muted-foreground">{m.techniques.youtubeHint}</p>
+        {error('youtubeUrl')}
+        {youtubeId && (
+          <a
+            href={youtubeWatchUrl(youtubeId)}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block overflow-hidden rounded-md border"
+          >
+            <img
+              src={youtubeThumbUrl(youtubeId)}
+              alt={m.techniques.youtubePreview}
+              className="h-27 w-48 object-cover"
+            />
+          </a>
+        )}
       </div>
 
       <div className="flex flex-wrap items-end gap-3 border-t pt-4">

@@ -3,7 +3,8 @@ import { useEvent } from 'expo';
 import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { Check, ChevronLeft, Heart, Volume2 } from 'lucide-react-native';
+import * as WebBrowser from 'expo-web-browser';
+import { Check, ChevronLeft, Heart, Play, Volume2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -204,6 +205,8 @@ function Hero({ t, top }: { t: CatalogTechnique; top: number }) {
     <View style={[styles.hero, { height: 300 + top }]}>
       {t.video ? (
         <VideoHero video={t.video} top={top} />
+      ) : t.youtube ? (
+        <YoutubeHero youtube={t.youtube} name={t.japaneseName} top={top} />
       ) : t.thumbUrl ? (
         <Image source={{ uri: t.thumbUrl }} style={StyleSheet.absoluteFill} resizeMode="cover" />
       ) : (
@@ -300,6 +303,46 @@ function VideoHero({ video, top }: { video: CatalogMedia; top: number }) {
   );
 }
 
+/** Vídeo hospedado no YouTube: capa com play, abre o vídeo no navegador do app. */
+function YoutubeHero({
+  youtube,
+  name,
+  top,
+}: {
+  youtube: NonNullable<CatalogTechnique['youtube']>;
+  name: string;
+  top: number;
+}) {
+  const open = () => {
+    WebBrowser.openBrowserAsync(youtube.url, {
+      presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
+    }).catch(() => undefined);
+  };
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`Assistir ao vídeo de ${name} no YouTube`}
+      onPress={open}
+      style={[StyleSheet.absoluteFill, { top, alignItems: 'center', justifyContent: 'center' }]}
+    >
+      <Image
+        source={{ uri: youtube.thumbUrl }}
+        style={StyleSheet.absoluteFill}
+        resizeMode="cover"
+      />
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.35)' }]} />
+      <View style={styles.playButton}>
+        <Play size={30} color={colors.ink} fill={colors.ink} style={{ marginLeft: 4 }} />
+      </View>
+      <View style={styles.heroBar} pointerEvents="none">
+        <Text weight="semibold" size={12} style={styles.durationChip}>
+          Assistir no YouTube
+        </Text>
+      </View>
+    </Pressable>
+  );
+}
+
 function StepCard({ step, n }: { step: CatalogMedia; n: number }) {
   const image = step.thumbUrl ?? (step.type === 'IMAGE' ? step.url : null);
   return (
@@ -335,6 +378,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   heroBack: { position: 'absolute', left: 16 },
+  playButton: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: colors.lime,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   heroFav: { position: 'absolute', right: 16 },
   heroBar: {
     position: 'absolute',

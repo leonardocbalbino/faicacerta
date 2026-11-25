@@ -12,3 +12,4 @@ export * from './schemas/media.js';
 export * from './utils/age.js';
 export * from './schemas/monetization.js';
 export * from './utils/cpf.js';
+export * from './utils/youtube.js';

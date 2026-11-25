@@ -205,6 +205,10 @@ export const ptBR = {
     keyPoints: 'Pontos-chave',
     commonMistakes: 'Erros comuns',
     examinerCriteria: 'O que o examinador avalia',
+    youtubeUrl: 'Vídeo no YouTube',
+    youtubeHint:
+      'Cole o link do vídeo (ex.: canal oficial da Kodokan). Aparece no app quando a técnica não tem vídeo próprio enviado.',
+    youtubePreview: 'Abrir o vídeo no YouTube',
     addItem: 'Adicionar item',
     itemPlaceholder: 'Escreva e tecle Enter',
     tabs: {

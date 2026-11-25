@@ -52,6 +52,10 @@ beforeEach(async () => {
     'Varrida do pé avançado',
     'DRAFT',
   );
+  await db.technique.update({
+    where: { id: ouchi.id },
+    data: { youtubeUrl: 'https://youtu.be/0itJFhV9pDQ?t=3' },
+  });
   const removed = await technique('ko-uchi-gari', 'Ko-uchi-gari', 'Pequena ceifada por dentro');
   await db.technique.update({ where: { id: removed.id }, data: { deletedAt: new Date() } });
   await db.techniqueRelation.createMany({
@@ -161,6 +165,20 @@ describe('catálogo público', () => {
     await api().get(`/v1/catalog/techniques/${res.body.id}`).expect(200);
     await api().get('/v1/catalog/techniques/de-ashi-harai').expect(404);
     await api().get('/v1/catalog/techniques/ko-uchi-gari').expect(404);
+  });
+
+  it('entrega o vídeo do YouTube (e a miniatura dele na lista) quando não há vídeo próprio', async () => {
+    const res = await api().get('/v1/catalog/techniques/o-uchi-gari').expect(200);
+    expect(res.body.video).toBeNull();
+    expect(res.body.youtube).toEqual({
+      id: '0itJFhV9pDQ',
+      url: 'https://www.youtube.com/watch?v=0itJFhV9pDQ',
+      thumbUrl: 'https://i.ytimg.com/vi/0itJFhV9pDQ/hqdefault.jpg',
+    });
+    expect(res.body.thumbUrl).toBe('https://i.ytimg.com/vi/0itJFhV9pDQ/hqdefault.jpg');
+
+    const osoto = await api().get('/v1/catalog/techniques/o-soto-gari').expect(200);
+    expect(osoto.body.youtube).toBeNull();
   });
 
   it('lista o glossário publicado e filtra pela busca', async () => {

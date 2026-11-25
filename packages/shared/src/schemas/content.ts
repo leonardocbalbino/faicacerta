@@ -6,6 +6,7 @@ import {
   REQUIREMENT_TYPES,
   TECHNIQUE_MEDIA_ROLES,
 } from '../enums.js';
+import { parseYoutubeId } from '../utils/youtube.js';
 import { mediaSchema } from './media.js';
 
 // -----------------------------------------------------------------------------
@@ -185,6 +186,17 @@ export const techniqueInputSchema = z.object({
   keyPoints: textList.default([]),
   commonMistakes: textList.default([]),
   examinerCriteria: optionalText(2000),
+  /** Link do vídeo no YouTube (ex.: canal oficial da Kodokan). Vazio remove. */
+  youtubeUrl: z
+    .string()
+    .trim()
+    .max(300)
+    .nullable()
+    .optional()
+    .transform((v) => (v === '' ? null : v))
+    .refine((v) => v == null || parseYoutubeId(v) !== null, {
+      error: 'Link do YouTube inválido.',
+    }),
 });
 export type TechniqueInput = z.infer<typeof techniqueInputSchema>;
 
@@ -236,6 +248,7 @@ export const techniqueDetailSchema = techniqueListItemSchema.extend({
   keyPoints: z.array(z.string()),
   commonMistakes: z.array(z.string()),
   examinerCriteria: z.string().nullable(),
+  youtubeUrl: z.string().nullable(),
   publishedAt: z.string().nullable(),
   pronunciationAudio: mediaSchema.nullable(),
   media: z.array(

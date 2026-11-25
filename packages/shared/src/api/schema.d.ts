@@ -2940,6 +2940,7 @@ export interface operations {
                     /** @default [] */
                     commonMistakes?: string[];
                     examinerCriteria?: string | null;
+                    youtubeUrl?: string | null;
                 };
             };
         };
@@ -2978,6 +2979,7 @@ export interface operations {
                         keyPoints: string[];
                         commonMistakes: string[];
                         examinerCriteria: string | null;
+                        youtubeUrl: string | null;
                         publishedAt: string | null;
                         pronunciationAudio: {
                             /** Format: uuid */
@@ -3100,6 +3102,7 @@ export interface operations {
                         keyPoints: string[];
                         commonMistakes: string[];
                         examinerCriteria: string | null;
+                        youtubeUrl: string | null;
                         publishedAt: string | null;
                         pronunciationAudio: {
                             /** Format: uuid */
@@ -3228,6 +3231,7 @@ export interface operations {
                     /** @default [] */
                     commonMistakes?: string[];
                     examinerCriteria?: string | null;
+                    youtubeUrl?: string | null;
                     comment?: string;
                 };
             };
@@ -3267,6 +3271,7 @@ export interface operations {
                         keyPoints: string[];
                         commonMistakes: string[];
                         examinerCriteria: string | null;
+                        youtubeUrl: string | null;
                         publishedAt: string | null;
                         pronunciationAudio: {
                             /** Format: uuid */
@@ -3401,6 +3406,7 @@ export interface operations {
                         keyPoints: string[];
                         commonMistakes: string[];
                         examinerCriteria: string | null;
+                        youtubeUrl: string | null;
                         publishedAt: string | null;
                         pronunciationAudio: {
                             /** Format: uuid */
@@ -3529,6 +3535,7 @@ export interface operations {
                         keyPoints: string[];
                         commonMistakes: string[];
                         examinerCriteria: string | null;
+                        youtubeUrl: string | null;
                         publishedAt: string | null;
                         pronunciationAudio: {
                             /** Format: uuid */
@@ -3659,6 +3666,7 @@ export interface operations {
                         keyPoints: string[];
                         commonMistakes: string[];
                         examinerCriteria: string | null;
+                        youtubeUrl: string | null;
                         publishedAt: string | null;
                         pronunciationAudio: {
                             /** Format: uuid */
@@ -3848,6 +3856,7 @@ export interface operations {
                         keyPoints: string[];
                         commonMistakes: string[];
                         examinerCriteria: string | null;
+                        youtubeUrl: string | null;
                         publishedAt: string | null;
                         pronunciationAudio: {
                             /** Format: uuid */
@@ -5828,6 +5837,11 @@ export interface operations {
                             width: number | null;
                             height: number | null;
                             caption: string | null;
+                        } | null;
+                        youtube?: {
+                            id: string;
+                            url: string;
+                            thumbUrl: string;
                         } | null;
                         steps: {
                             /** @enum {string} */

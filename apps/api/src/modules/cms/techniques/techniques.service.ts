@@ -73,6 +73,7 @@ interface TechniqueSnapshot {
   keyPoints: string[];
   commonMistakes: string[];
   examinerCriteria: string | null;
+  youtubeUrl?: string | null;
   media: { mediaId: string; role: TechniqueMediaRole; caption: string | null }[];
   related: string[];
 }
@@ -89,6 +90,7 @@ function snapshotOf(t: DetailRow): TechniqueSnapshot {
     keyPoints: t.keyPoints,
     commonMistakes: t.commonMistakes,
     examinerCriteria: t.examinerCriteria,
+    youtubeUrl: t.youtubeUrl,
     media: t.media.map((m) => ({ mediaId: m.mediaId, role: m.role, caption: m.caption })),
     related: t.relatedTo.map((r) => r.relatedId),
   };
@@ -153,6 +155,7 @@ export class TechniquesService {
           keyPoints: input.keyPoints,
           commonMistakes: input.commonMistakes,
           examinerCriteria: input.examinerCriteria ?? null,
+          youtubeUrl: input.youtubeUrl ?? null,
           status: 'DRAFT',
         },
       });
@@ -179,6 +182,7 @@ export class TechniquesService {
           keyPoints: input.keyPoints,
           commonMistakes: input.commonMistakes,
           examinerCriteria: input.examinerCriteria,
+          youtubeUrl: input.youtubeUrl,
           version: { increment: 1 },
         },
       });
@@ -336,6 +340,8 @@ export class TechniquesService {
           keyPoints: s.keyPoints,
           commonMistakes: s.commonMistakes,
           examinerCriteria: s.examinerCriteria,
+          // Versões salvas antes do campo existir não têm vídeo do YouTube.
+          youtubeUrl: s.youtubeUrl ?? null,
           status: 'DRAFT',
           version: { increment: 1 },
         },
@@ -462,6 +468,7 @@ export class TechniquesService {
       keyPoints: t.keyPoints,
       commonMistakes: t.commonMistakes,
       examinerCriteria: t.examinerCriteria,
+      youtubeUrl: t.youtubeUrl,
       publishedAt: t.publishedAt?.toISOString() ?? null,
       updatedAt: t.updatedAt.toISOString(),
       thumbUrl:

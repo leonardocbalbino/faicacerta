@@ -10,6 +10,7 @@ import type {
   CatalogTechnique,
   CatalogTechniqueItem,
 } from '@faixa-certa/shared';
+import { parseYoutubeId, youtubeThumbUrl, youtubeWatchUrl } from '@faixa-certa/shared';
 import { AppException } from '../../common/errors/app.exception.js';
 import { Prisma, type Media } from '../../generated/prisma/client.js';
 import { PrismaService } from '../../infra/prisma/prisma.service.js';
@@ -171,6 +172,7 @@ export class CatalogService {
       examinerCriteria: t.examinerCriteria,
       pronunciationAudioUrl: audioUrl,
       video,
+      youtube: youtubeOf(t.youtubeUrl),
       steps,
       gallery,
       related,
@@ -305,7 +307,9 @@ export class CatalogService {
       japaneseScript: t.japaneseScript,
       translation: t.translation,
       category: toCategory(t.category),
-      thumbUrl: coverReady ? await this.url(coverReady, coverReady.keyThumb) : null,
+      thumbUrl: coverReady
+        ? await this.url(coverReady, coverReady.keyThumb)
+        : (youtubeOf(t.youtubeUrl)?.thumbUrl ?? null),
       videoDurationMs:
         coverReady && t.media[0]?.role === 'MAIN_VIDEO' ? coverReady.durationMs : null,
     };
@@ -322,6 +326,11 @@ export class CatalogService {
       audioUrl: await this.audioUrl(g.audio),
     };
   }
+}
+
+function youtubeOf(url: string | null): CatalogTechnique['youtube'] {
+  const id = parseYoutubeId(url);
+  return id ? { id, url: youtubeWatchUrl(id), thumbUrl: youtubeThumbUrl(id) } : null;
 }
 
 function isReady(media: Media): boolean {

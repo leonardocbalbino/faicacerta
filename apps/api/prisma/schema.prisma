@@ -493,6 +493,7 @@ model Technique {
   keyPoints            String[]
   commonMistakes       String[]
   examinerCriteria     String?
+  youtubeUrl           String? // vídeo no YouTube (ex.: canal oficial da Kodokan)
   status               PublicationStatus @default(DRAFT)
   publishedAt          DateTime?
   version              Int               @default(1)
