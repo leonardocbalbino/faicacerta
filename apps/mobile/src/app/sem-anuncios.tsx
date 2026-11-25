@@ -31,6 +31,12 @@ export default function SemAnuncios() {
   const restoring = useRef(false);
   /** Busca do preço na loja: troca o carregando por um aviso se a loja não devolver o produto. */
   const [load, setLoad] = useState<'loading' | 'unavailable'>('loading');
+  /** Motivo técnico do aviso (ajuda o suporte a entender o que a loja respondeu). */
+  const [reason, setReason] = useState('');
+  const fail = (why: string) => {
+    setReason(why);
+    setLoad('unavailable');
+  };
 
   /** Confirma a compra no servidor (que valida com a loja) e só então finaliza na loja. */
   const confirm = useCallback(
@@ -65,7 +71,7 @@ export default function SemAnuncios() {
         setBusy(null);
       }
     },
-    onError: () => setLoad('unavailable'),
+    onError: (error) => fail(error.message),
     onPurchaseError: (error) => {
       setBusy(null);
       if (isUserCancelledError(error)) return;
@@ -75,11 +81,12 @@ export default function SemAnuncios() {
 
   const loadProduct = useCallback(async () => {
     setLoad('loading');
+    setReason('');
     try {
-      if (!iap.connected && !(await iap.reconnect())) throw new Error('store offline');
+      if (!iap.connected && !(await iap.reconnect())) throw new Error('sem conexão com a loja');
       await iap.fetchProducts({ skus: [sku], type: 'in-app' });
-    } catch {
-      setLoad('unavailable');
+    } catch (e) {
+      fail(e instanceof Error ? e.message : String(e));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [iap.connected, sku]);
@@ -117,8 +124,17 @@ export default function SemAnuncios() {
   // Loja sem resposta em 10 s, ou busca concluída sem o produto: mostra o aviso.
   useEffect(() => {
     if (product || load !== 'loading') return;
-    const timer = setTimeout(() => setLoad('unavailable'), 10_000);
+    const timer = setTimeout(
+      () =>
+        fail(
+          iap.connected
+            ? `produto "${sku}" não retornado (${iap.products.length} recebidos)`
+            : 'sem conexão com a loja',
+        ),
+      10_000,
+    );
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product, load]);
 
   const buy = async () => {
@@ -210,6 +226,11 @@ export default function SemAnuncios() {
             <Text variant="muted" size={14} style={{ lineHeight: 20 }}>
               {`Não conseguimos falar com a ${Platform.OS === 'ios' ? 'App Store' : 'Google Play'} agora. Confira a internet e tente de novo.`}
             </Text>
+            {reason ? (
+              <Text variant="muted" size={11}>
+                {`Detalhe: ${reason}`}
+              </Text>
+            ) : null}
             <Pressable accessibilityRole="button" onPress={loadProduct} style={styles.retry}>
               <Text weight="semibold" size={14} color={colors.lime}>
                 Tentar de novo
