@@ -3,13 +3,13 @@ import { useEvent } from 'expo';
 import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import * as WebBrowser from 'expo-web-browser';
 import { Check, ChevronLeft, Heart, Play, Volume2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RichText } from '@/components/rich-text';
 import { categoryPath, TechniqueRow } from '@/components/technique-row';
+import { YoutubePlayer } from '@/components/youtube-player';
 import { IconButton, PrimaryButton, SecondaryButton, StateView, Text } from '@/components/ui';
 import { useAds } from '@/lib/ads';
 import { useTechnique } from '@/lib/api';
@@ -303,7 +303,10 @@ function VideoHero({ video, top }: { video: CatalogMedia; top: number }) {
   );
 }
 
-/** Vídeo hospedado no YouTube: capa com play, abre o vídeo no navegador do app. */
+/**
+ * Vídeo hospedado no YouTube: mostra a capa e, ao tocar, o player dentro da
+ * tela (abaixo dos botões de voltar e favoritar).
+ */
 function YoutubeHero({
   youtube,
   name,
@@ -313,16 +316,19 @@ function YoutubeHero({
   name: string;
   top: number;
 }) {
-  const open = () => {
-    WebBrowser.openBrowserAsync(youtube.url, {
-      presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
-    }).catch(() => undefined);
-  };
+  const [playing, setPlaying] = useState(false);
+  if (playing) {
+    return (
+      <View style={[StyleSheet.absoluteFill, { top: top + 56 }]}>
+        <YoutubePlayer id={youtube.id} url={youtube.url} />
+      </View>
+    );
+  }
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`Assistir ao vídeo de ${name} no YouTube`}
-      onPress={open}
+      accessibilityLabel={`Assistir ao vídeo de ${name}`}
+      onPress={() => setPlaying(true)}
       style={[StyleSheet.absoluteFill, { top, alignItems: 'center', justifyContent: 'center' }]}
     >
       <Image
@@ -336,7 +342,7 @@ function YoutubeHero({
       </View>
       <View style={styles.heroBar} pointerEvents="none">
         <Text weight="semibold" size={12} style={styles.durationChip}>
-          Assistir no YouTube
+          Vídeo · YouTube
         </Text>
       </View>
     </Pressable>
