@@ -29,6 +29,8 @@ export default function SemAnuncios() {
   const [busy, setBusy] = useState<'buy' | 'restore' | null>(null);
   const [done, setDone] = useState(false);
   const restoring = useRef(false);
+  /** Busca do preço na loja: troca o carregando por um aviso se a loja não devolver o produto. */
+  const [load, setLoad] = useState<'loading' | 'unavailable'>('loading');
 
   /** Confirma a compra no servidor (que valida com a loja) e só então finaliza na loja. */
   const confirm = useCallback(
@@ -63,6 +65,7 @@ export default function SemAnuncios() {
         setBusy(null);
       }
     },
+    onError: () => setLoad('unavailable'),
     onPurchaseError: (error) => {
       setBusy(null);
       if (isUserCancelledError(error)) return;
@@ -70,10 +73,20 @@ export default function SemAnuncios() {
     },
   });
 
-  useEffect(() => {
-    if (iap.connected) void iap.fetchProducts({ skus: [sku], type: 'in-app' });
+  const loadProduct = useCallback(async () => {
+    setLoad('loading');
+    try {
+      if (!iap.connected && !(await iap.reconnect())) throw new Error('store offline');
+      await iap.fetchProducts({ skus: [sku], type: 'in-app' });
+    } catch {
+      setLoad('unavailable');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [iap.connected, sku]);
+
+  useEffect(() => {
+    if (iap.connected) void loadProduct();
+  }, [iap.connected, loadProduct]);
 
   // Restaurar: confirma cada compra já feita nesta conta da loja.
   useEffect(() => {
@@ -100,6 +113,13 @@ export default function SemAnuncios() {
 
   const product = iap.products.find((p) => p.id === sku);
   const price = product?.displayPrice;
+
+  // Loja sem resposta em 10 s, ou busca concluída sem o produto: mostra o aviso.
+  useEffect(() => {
+    if (product || load !== 'loading') return;
+    const timer = setTimeout(() => setLoad('unavailable'), 10_000);
+    return () => clearTimeout(timer);
+  }, [product, load]);
 
   const buy = async () => {
     if (status !== 'signedIn') {
@@ -180,9 +200,21 @@ export default function SemAnuncios() {
               <Text variant="display" size={32}>
                 {price}
               </Text>
-            ) : (
+            ) : load === 'loading' ? (
               <ActivityIndicator color={colors.lime} />
-            )}
+            ) : null}
+          </View>
+        )}
+        {!isDone && !price && load === 'unavailable' && (
+          <View style={{ gap: 4, alignItems: 'flex-start' }}>
+            <Text variant="muted" size={14} style={{ lineHeight: 20 }}>
+              {`Não conseguimos falar com a ${Platform.OS === 'ios' ? 'App Store' : 'Google Play'} agora. Confira a internet e tente de novo.`}
+            </Text>
+            <Pressable accessibilityRole="button" onPress={loadProduct} style={styles.retry}>
+              <Text weight="semibold" size={14} color={colors.lime}>
+                Tentar de novo
+              </Text>
+            </Pressable>
           </View>
         )}
       </ScrollView>
@@ -280,5 +312,6 @@ const styles = StyleSheet.create({
     gap: 6,
     backgroundColor: colors.ink,
   },
+  retry: { minHeight: 44, justifyContent: 'center' },
   restore: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
 });
