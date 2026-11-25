@@ -3,7 +3,7 @@ name: Mobile (EAS)
 # Build do app nas nuvens da Expo e envio às lojas.
 #   - Manual: Actions → "Mobile (EAS)" → Run workflow (escolhe plataforma e perfil).
 #   - Tag: `git tag mobile-v1.0.0 && git push origin mobile-v1.0.0` → build de produção
-#     das duas plataformas com envio automático (App Store Connect / Google Play interno).
+#     das duas plataformas, com envio automático ao App Store Connect (TestFlight).
 # Precisa do secret EXPO_TOKEN (expo.dev → Account settings → Access tokens).
 on:
   workflow_dispatch:
@@ -59,7 +59,13 @@ jobs:
       # Credenciais da Apple (certificado, perfil e chave do App Store Connect para o envio)
       # e a keystore do Android ficam guardadas na Expo; o CI não precisa delas.
       - name: Build (e envio, se pedido)
+        # Envio automático só para a Apple (a chave do App Store Connect está na Expo).
+        # O AAB do Android é enviado ao Google Play pela API, fora da Expo.
         run: |
-          ARGS="--platform $PLATFORM --profile $PROFILE --non-interactive --no-wait"
-          if [ "$SUBMIT" = "true" ]; then ARGS="$ARGS --auto-submit"; fi
-          eas build $ARGS
+          ARGS="--profile $PROFILE --non-interactive --no-wait"
+          if [ "$PLATFORM" != "android" ]; then
+            IOS_ARGS="$ARGS"
+            if [ "$SUBMIT" = "true" ]; then IOS_ARGS="$IOS_ARGS --auto-submit"; fi
+            eas build --platform ios $IOS_ARGS
+          fi
+          if [ "$PLATFORM" != "ios" ]; then eas build --platform android $ARGS; fi
