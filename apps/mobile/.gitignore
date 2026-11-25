@@ -43,3 +43,6 @@ yarn-error.*
 # Credenciais das lojas (nunca commitar)
 google-play-service-account.json
 *.p8
+# Chaves de conta de serviço do Google (nome padrão do download)
+faixa-certa-*.json
+*-service-account*.json
